@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamworks.Generator", "Steamworks.Generator\Steamworks.Generator.csproj", "{BF8C0DD6-D095-4168-9574-2A5F78542882}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamworks", "Steamworks\Steamworks.csproj", "{2B0ED227-4308-48CC-A57F-4AC46547EE55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamworks.Tests", "Steamworks.Tests\Steamworks.Tests.csproj", "{2B50F6B5-B67D-4F8C-B197-F8561891BCB3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF8C0DD6-D095-4168-9574-2A5F78542882}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF8C0DD6-D095-4168-9574-2A5F78542882}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF8C0DD6-D095-4168-9574-2A5F78542882}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF8C0DD6-D095-4168-9574-2A5F78542882}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B0ED227-4308-48CC-A57F-4AC46547EE55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B0ED227-4308-48CC-A57F-4AC46547EE55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B0ED227-4308-48CC-A57F-4AC46547EE55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B0ED227-4308-48CC-A57F-4AC46547EE55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B50F6B5-B67D-4F8C-B197-F8561891BCB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B50F6B5-B67D-4F8C-B197-F8561891BCB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B50F6B5-B67D-4F8C-B197-F8561891BCB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B50F6B5-B67D-4F8C-B197-F8561891BCB3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

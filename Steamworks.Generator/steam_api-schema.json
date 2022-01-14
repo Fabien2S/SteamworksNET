@@ -1,0 +1,475 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$ref": "#/definitions/Welcome1",
+    "definitions": {
+        "SteamAPI": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "callback_structs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/CallbackStruct"
+                    }
+                },
+                "consts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Const"
+                    }
+                },
+                "enums": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Welcome1Enum"
+                    }
+                },
+                "interfaces": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Interface"
+                    }
+                },
+                "structs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Struct"
+                    }
+                },
+                "typedefs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Typedef"
+                    }
+                }
+            },
+            "required": [
+                "callback_structs",
+                "consts",
+                "enums",
+                "interfaces",
+                "structs",
+                "typedefs"
+            ],
+            "title": "Welcome1"
+        },
+        "CallbackStruct": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "callback_id": {
+                    "type": "integer"
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/CallbackStructField"
+                    }
+                },
+                "struct": {
+                    "type": "string"
+                },
+                "enums": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/CallbackStructEnum"
+                    }
+                },
+                "consts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Const"
+                    }
+                }
+            },
+            "required": [
+                "callback_id",
+                "fields",
+                "struct"
+            ],
+            "title": "CallbackStruct"
+        },
+        "Const": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "constname": {
+                    "type": "string"
+                },
+                "consttype": {
+                    "type": "string"
+                },
+                "constval": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "constname",
+                "consttype",
+                "constval"
+            ],
+            "title": "Const"
+        },
+        "CallbackStructEnum": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "enumname": {
+                    "type": "string"
+                },
+                "fqname": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Value"
+                    }
+                }
+            },
+            "required": [
+                "enumname",
+                "fqname",
+                "values"
+            ],
+            "title": "CallbackStructEnum"
+        },
+        "Value": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string",
+                    "format": "integer"
+                }
+            },
+            "required": [
+                "name",
+                "value"
+            ],
+            "title": "Value"
+        },
+        "CallbackStructField": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "fieldname": {
+                    "type": "string"
+                },
+                "fieldtype": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "fieldname",
+                "fieldtype"
+            ],
+            "title": "CallbackStructField"
+        },
+        "Welcome1Enum": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "enumname": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Value"
+                    }
+                }
+            },
+            "required": [
+                "enumname",
+                "values"
+            ],
+            "title": "Welcome1Enum"
+        },
+        "Interface": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "classname": {
+                    "type": "string"
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {}
+                },
+                "methods": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/InterfaceMethod"
+                    }
+                },
+                "accessors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Accessor"
+                    }
+                },
+                "version_string": {
+                    "type": "string"
+                },
+                "enums": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/CallbackStructEnum"
+                    }
+                }
+            },
+            "required": [
+                "classname",
+                "fields",
+                "methods"
+            ],
+            "title": "Interface"
+        },
+        "Accessor": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "kind": {
+                    "$ref": "#/definitions/Kind"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "name_flat": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "kind",
+                "name",
+                "name_flat"
+            ],
+            "title": "Accessor"
+        },
+        "InterfaceMethod": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "methodname": {
+                    "type": "string"
+                },
+                "methodname_flat": {
+                    "type": "string"
+                },
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/PurpleParam"
+                    }
+                },
+                "returntype": {
+                    "type": "string"
+                },
+                "returntype_flat": {
+                    "$ref": "#/definitions/TypeFlat"
+                },
+                "callresult": {
+                    "type": "string"
+                },
+                "callback": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "methodname",
+                "methodname_flat",
+                "params",
+                "returntype"
+            ],
+            "title": "InterfaceMethod"
+        },
+        "PurpleParam": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "paramname": {
+                    "type": "string"
+                },
+                "paramtype": {
+                    "type": "string"
+                },
+                "paramtype_flat": {
+                    "$ref": "#/definitions/TypeFlat"
+                },
+                "out_struct": {
+                    "type": "string"
+                },
+                "out_array_call": {
+                    "type": "string"
+                },
+                "array_count": {
+                    "type": "string"
+                },
+                "out_string_count": {
+                    "type": "string"
+                },
+                "out_string": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "out_array_count": {
+                    "type": "string"
+                },
+                "out_buffer_count": {
+                    "type": "string"
+                },
+                "buffer_count": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "paramname",
+                "paramtype"
+            ],
+            "title": "PurpleParam"
+        },
+        "Struct": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/StructField"
+                    }
+                },
+                "methods": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/StructMethod"
+                    }
+                },
+                "struct": {
+                    "type": "string"
+                },
+                "consts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Const"
+                    }
+                }
+            },
+            "required": [
+                "fields",
+                "struct"
+            ],
+            "title": "Struct"
+        },
+        "StructField": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "fieldname": {
+                    "type": "string"
+                },
+                "fieldtype": {
+                    "type": "string"
+                },
+                "private": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "fieldname",
+                "fieldtype"
+            ],
+            "title": "StructField"
+        },
+        "StructMethod": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "methodname": {
+                    "type": "string"
+                },
+                "methodname_flat": {
+                    "type": "string"
+                },
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/FluffyParam"
+                    }
+                },
+                "returntype": {
+                    "type": "string"
+                },
+                "returntype_flat": {
+                    "$ref": "#/definitions/TypeFlat"
+                }
+            },
+            "required": [
+                "methodname",
+                "methodname_flat",
+                "params",
+                "returntype"
+            ],
+            "title": "StructMethod"
+        },
+        "FluffyParam": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "paramname": {
+                    "type": "string"
+                },
+                "paramtype": {
+                    "type": "string"
+                },
+                "paramtype_flat": {
+                    "$ref": "#/definitions/TypeFlat"
+                }
+            },
+            "required": [
+                "paramname",
+                "paramtype"
+            ],
+            "title": "FluffyParam"
+        },
+        "Typedef": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "typedef": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "typedef"
+            ],
+            "title": "Typedef"
+        },
+        "Kind": {
+            "type": "string",
+            "enum": [
+                "user",
+                "gameserver",
+                "global"
+            ],
+            "title": "Kind"
+        },
+        "TypeFlat": {
+            "type": "string",
+            "enum": [
+                "uint64_steamid",
+                "uint64_gameid"
+            ],
+            "title": "TypeFlat"
+        }
+    }
+}

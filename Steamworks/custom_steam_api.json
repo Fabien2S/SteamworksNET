@@ -1,0 +1,15 @@
+{
+  "structs": [
+    {
+      "fields": [],
+      "methods": [],
+      "struct": "SteamDatagramRelayAuthTicket"
+    }
+  ],
+  "typedefs": [
+    {
+      "typedef": "SteamAPIWarningMessageHook_t",
+      "type": "void (*)(int, const char *)"
+    }
+  ]
+}
