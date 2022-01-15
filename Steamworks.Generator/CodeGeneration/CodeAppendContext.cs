@@ -12,7 +12,6 @@ public readonly ref struct CodeAppendContext
 
     public void Dispose()
     {
-        _writer.EndAppend();
         if (_writer.EndAppend())
             _writer.WriteLine();
     }
