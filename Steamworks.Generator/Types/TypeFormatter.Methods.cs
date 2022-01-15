@@ -4,7 +4,7 @@ namespace Steamworks.Generator.Types;
 
 public static partial class TypeFormatter
 {
-    public static bool TryFormatMethodFacing(ref MethodModel method)
+    public static void FormatMethodFacing(ref MethodModel method)
     {
         method.ReturnType = TypeConverter.ConvertType(method.ReturnType);
 
@@ -22,11 +22,9 @@ public static partial class TypeFormatter
         // Fix operator for now
         // if (method.Name.Contains("operator", StringComparison.Ordinal))
         //     method.Name = method.FlatName[(method.FlatName.LastIndexOf('_') + 1)..];
-
-        return true;
     }
 
-    public static bool TryFormatMethodNative(ref MethodModel method)
+    public static void FormatMethodNative(ref MethodModel method)
     {
         method.ReturnType = FormatMethodNativeReturnType(in method);
 
@@ -44,8 +42,6 @@ public static partial class TypeFormatter
         // Fix operator for now
         // if (method.Name.Contains("operator", StringComparison.Ordinal))
         //     method.Name = method.FlatName[(method.FlatName.LastIndexOf('_') + 1)..];
-
-        return true;
     }
 
     private static string FormatMethodNativeReturnType(in MethodModel method)

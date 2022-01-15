@@ -4,7 +4,7 @@ namespace Steamworks.Generator.Types;
 
 public static partial class TypeFormatter
 {
-    public static bool TryFormatConstant(ref ConstantModel constant)
+    public static void FormatConstant(ref ConstantModel constant)
     {
         constant.Type = TypeConverter.ConvertType(constant.Type);
         constant.Value = FormatValue(constant.Value);
@@ -25,7 +25,5 @@ public static partial class TypeFormatter
 
             _ => constant.Value,
         };
-
-        return true;
     }
 }

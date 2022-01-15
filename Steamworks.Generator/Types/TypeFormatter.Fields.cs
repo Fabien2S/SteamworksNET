@@ -4,16 +4,10 @@ namespace Steamworks.Generator.Types;
 
 public static partial class TypeFormatter
 {
-    public static bool TryFormatField(ref FieldModel field)
+    public static void FormatField(ref FieldModel field)
     {
         field.Type = TypeConverter.ConvertType(field.Type);
         field.CustomAttribute = FormatFieldAttribute(in field);
-
-        // SteamInputActionEvent_t.AnalogAction_t is not included in steam_api.json 
-        if (field.Type.Equals("SteamInputActionEvent_t.AnalogAction_t", StringComparison.Ordinal))
-            return false;
-
-        return true;
     }
 
     private static string? FormatFieldAttribute(in FieldModel field)

@@ -4,8 +4,7 @@ namespace Steamworks.Generator.Types;
 
 public static partial class TypeFormatter
 {
-    public static bool TryFormatEnum(ref EnumModel @enum)
+    public static void FormatEnum(ref EnumModel @enum)
     {
-        return true;
     }
 }
