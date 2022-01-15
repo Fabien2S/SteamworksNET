@@ -86,11 +86,11 @@ namespace Steamworks.Generator.CodeGeneration
             _append++;
         }
 
-        public void EndAppend()
+        public bool EndAppend()
         {
             _append--;
-            if (_append < 0)
-                _append = 0;
+            if (_append < 0) _append = 0;
+            return _append == 0;
         }
 
         public void BeginBlock(char c = '{')
@@ -104,7 +104,9 @@ namespace Steamworks.Generator.CodeGeneration
         public void EndBlock(char c = '}')
         {
             _indentCache = null;
+
             _indent--;
+            if (_indent < 0) _indent = 0;
 
             Write(c);
         }
