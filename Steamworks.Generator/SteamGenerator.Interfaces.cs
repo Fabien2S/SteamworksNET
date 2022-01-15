@@ -26,14 +26,10 @@ public partial class SteamGenerator
                 if (interfaceModel.Fields != null)
                 {
                     foreach (var field in interfaceModel.Fields)
-                    {
                         _writer.WriteField(field, _model.TypeDefs);
-                    }
-
                     _writer.WriteLine();
                 }
 
-                // TODO Methods should map to SteamNative.XYZ()
                 if (interfaceModel.Methods != null)
                 {
                     foreach (var method in interfaceModel.Methods)

@@ -24,6 +24,7 @@ public partial class SteamGenerator
     {
         _writer.Reset();
 
+        _writer.WriteUsing("Steamworks.Callbacks");
         _writer.WriteUsing("Steamworks.Native");
         _writer.WriteUsing("System.Runtime.InteropServices");
         _writer.WriteLine();

@@ -38,12 +38,12 @@ public struct MethodModel
     /// <a href="https://partner.steamgames.com/doc/sdk/api#callresults">CallResults</a> on Steamworks Docs
     /// </summary>
     [JsonPropertyName("callresult")]
-    public string CallResult { get; set; }
+    public string? CallResult { get; set; }
 
     // 
     /// <summary>
     /// <a href="https://partner.steamgames.com/doc/sdk/api#callbacks">Callbacks</a> on Steamworks Docs
     /// </summary>
     [JsonPropertyName("callback")]
-    public string Callback { get; set; }
+    public string? Callback { get; set; }
 }

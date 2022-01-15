@@ -41,7 +41,7 @@ public partial class SteamGenerator
     private void GenerateTypeDefStruct(string type, string name)
     {
         _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _dllPack);
-        using (_writer.WriteStruct(name, "public readonly unsafe"))
+        using (_writer.WriteStruct(name, "public readonly unsafe", ": IEquatable<" + name + ">"))
         {
             // backing field
             if (SteamConverter.TryGetUnmanagedType(type, out var unmanagedType))
@@ -68,6 +68,10 @@ public partial class SteamGenerator
 
             _writer.WriteLine();
 
+            using (_writer.AppendContext())
+                _writer.Write("public bool Equals(").Write(name).Write(" other) => _value == other._value;");
+            _writer.WriteLine();
+            
             var isPointer = type.Contains('*');
             if (isPointer)
             {
@@ -75,8 +79,7 @@ public partial class SteamGenerator
             }
             else
             {
-                _writer.Write("public override bool Equals(object? obj) => obj is " + type +
-                              " v && v.Equals(_value);");
+                _writer.Write("public override bool Equals(object? obj) => obj is " + type + " v && Equals(v);");
                 _writer.WriteLine();
                 _writer.Write("public override int GetHashCode() => _value.GetHashCode();");
                 _writer.WriteLine();

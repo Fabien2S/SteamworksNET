@@ -8,8 +8,7 @@ public static class CodeWriterExtensions
 {
     public static void WriteConstant(this CodeWriter writer, ConstantModel constant, bool useConst)
     {
-        if (!TypeFormatter.TryFormatConstant(ref constant))
-            return;
+        TypeFormatter.FormatConstant(ref constant);
 
         using (writer.AppendContext())
         {
@@ -27,8 +26,7 @@ public static class CodeWriterExtensions
 
     public static void WriteEnum(this CodeWriter writer, EnumModel @enum)
     {
-        if (!TypeFormatter.TryFormatEnum(ref @enum))
-            return;
+        TypeFormatter.FormatEnum(ref @enum);
 
         writer.Write("public enum " + @enum.Name);
         using (writer.BlockContext())
@@ -43,8 +41,10 @@ public static class CodeWriterExtensions
 
     public static void WriteField(this CodeWriter writer, FieldModel field, TypeDefModel[]? typeDefs)
     {
-        if (!TypeFormatter.TryFormatField(ref field))
+        if (!TypePredicate.ShouldIncludeField(in field))
             return;
+
+        TypeFormatter.FormatField(ref field);
 
         if (field.CustomAttribute != null)
             writer.Write(field.CustomAttribute);
@@ -73,8 +73,7 @@ public static class CodeWriterExtensions
 
     public static void WriteMethodNative(this CodeWriter writer, string dllName, MethodModel method, bool hasSelfPtr)
     {
-        if (!TypeFormatter.TryFormatMethodNative(ref method))
-            return;
+        TypeFormatter.FormatMethodNative(ref method);
 
         writer.WriteDllImportAttribute(dllName, method.FlatName);
 
@@ -121,8 +120,38 @@ public static class CodeWriterExtensions
 
     public static void WriteMethodFacing(this CodeWriter writer, MethodModel method, bool hasSelfPtr)
     {
-        if (!TypeFormatter.TryFormatMethodFacing(ref method))
-            return;
+        TypeFormatter.FormatMethodFacing(ref method);
+
+        writer.Write("/// <summary>");
+        using (writer.AppendContext())
+            writer.Write("/// ").Write(method.FlatName);
+        writer.Write("/// </summary>");
+
+        if (method.Parameters != null)
+        {
+            foreach (var parameter in method.Parameters)
+            {
+                using (writer.AppendContext())
+                {
+                    writer
+                        .Write("/// <param name=\"").Write(parameter.Name).Write("\">")
+                        .Write(parameter.Description)
+                        .Write("</param>");
+                }
+            }
+        }
+
+        if (!string.IsNullOrEmpty(method.CallResult))
+        {
+            using (writer.AppendContext())
+                writer.Write("/// <seealso cref=\"").Write(method.CallResult).Write("\"/>");
+        }
+
+        if (!string.IsNullOrEmpty(method.Callback))
+        {
+            using (writer.AppendContext())
+                writer.Write("/// <seealso cref=\"").Write(method.Callback).Write("\"/>");
+        }
 
         using (writer.AppendContext())
         {

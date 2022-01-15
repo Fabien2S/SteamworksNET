@@ -1,8 +1,8 @@
 global using static Steamworks.SteamAPI;
 using System;
-using System.Globalization;
 using System.Text;
 using NUnit.Framework;
+using Steamworks.Callbacks;
 
 namespace Steamworks.Tests;
 
@@ -52,34 +52,34 @@ public class SteamApiTests
     [Test]
     public void SteamMatchmaking_RequestLobbyList()
     {
-        SteamCallResult<LobbyMatchList_t> lobbyMatchListCallResult = default;
-        
-        
-        var call = SteamMatchmaking().RequestLobbyList();
-        lobbyMatchListCallResult.Set(call, (lobbyList, ioFailure) =>
+        var waitUntil = false;
+
+        var handle = SteamMatchmaking().RequestLobbyList();
+
+        CallResult<LobbyMatchList_t> lobbyMatchListCallResult;
+        lobbyMatchListCallResult.Set(handle, (in LobbyMatchList_t lobbyMatchList, in bool failed) =>
         {
-            
-        });
-        
-        SteamDispatcher.Subscribe((LobbyMatchList_t result) =>
-        {
-            var lobbyCount = result.m_nLobbiesMatching;
-            
+            if (failed)
+                Assert.Fail("SteamAPI_ISteamMatchmaking_RequestLobbyList failed!");
+
+            var lobbyCount = lobbyMatchList.m_nLobbiesMatching;
             var msg = new StringBuilder();
             for (var i = 0; i < lobbyCount; i++)
             {
-                var friendId = SteamMatchmaking().GetLobbyByIndex(i);
-                var friendName = SteamMatchmaking().getlobby(friendId);
-                msg.AppendLine($"friend {i} (id: {friendId}, name: {friendName})");
+                var lobbyId = SteamMatchmaking().GetLobbyByIndex(i);
+                msg.AppendLine($"lobby " + lobbyId);
             }
-            
-            Assert.Pass(lobbyCount.ToString(NumberFormatInfo.InvariantInfo));
-        });
-        var t = SteamCallback<LobbyMatchList_t>.Create(lobbyMatchList =>
-        {
-            Assert.Pass(lobbyMatchList.m_nLobbiesMatching.ToString(NumberFormatInfo.InvariantInfo));
+
+            Assert.Pass(msg.ToString());
+            waitUntil = true;
         });
 
+
+        while (true)
+        {
+            SteamDispatcher.RunCallbacks(SteamAPI_GetHSteamPipe());
+            if (waitUntil) break;
+        }
     }
 
     [Test]

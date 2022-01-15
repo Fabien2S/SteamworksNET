@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using Steamworks.Generator.CodeGeneration;
 using Steamworks.Generator.Extensions;
 using Steamworks.Generator.Models;
+using Steamworks.Generator.Types;
 
 namespace Steamworks.Generator;
 
@@ -20,68 +21,90 @@ public partial class SteamGenerator
 
     public string GenerateCallbackStructs()
     {
-        if (_model.CallbackStructs == null)
+        var callbackStructs = _model.CallbackStructs;
+        if (callbackStructs == null)
             return string.Empty;
 
         Prepare();
 
-        using (_writer.WriteClass("SteamCallbacks", "public static"))
-        {
-            _writer.WriteConstant(new ConstantModel
-            {
-                Name = "Count",
-                Type = "int",
-                Value = _model.CallbackStructs.Length.ToString(NumberFormatInfo.InvariantInfo)
-            }, true);
-            _writer.WriteLine();
+        // There are known duplicated callbacks, so we use a HashSet to prevent
+        // duplication in switch cases
+        var distinctCallbackIDs = new HashSet<int>();
 
-            _writer.Write("public enum Type");
-            using (_writer.BlockContext())
-            {
-                foreach (var callbackStruct in _model.CallbackStructs)
-                {
-                    using (_writer.AppendContext())
-                    {
-                        _writer
-                            .Write(callbackStruct.Name)
-                            .Write(" = ")
-                            .Write(callbackStruct.CallbackId.ToString(NumberFormatInfo.InvariantInfo))
-                            .Write(',');
-                    }
-                }
-            }
-        }
-        _writer.WriteLine();
-        
         // SteamDispatcher handlers
-        using (_writer.WriteClass("SteamDispatcher", "public static partial"))
-        {
-            _writer.Write("static unsafe partial void HandleCallback(in CallbackMsg_t* pCallback)");
-            using (_writer.BlockContext())
-            {
-                _writer.Write("// Do something with the call result");
-            }
-            _writer.WriteLine();
+        // using (_writer.WriteClass("SteamDispatcher", "public static partial"))
+        // {
+        //     _writer.Write(
+        //         "static unsafe partial void HandleCallResult(in CallbackMsg_t* pCallback, in SteamAPICall_t callHandle, in void* dataPtr, in bool bFailed)");
+        //     using (_writer.BlockContext())
+        //     {
+        //         _writer.Write("if (!CallResultHandlers.TryGetValue(callHandle, out var listenerPtr)) return;");
+        //         _writer.Write("switch (pCallback->m_iCallback)");
+        //         using (_writer.BlockContext())
+        //         {
+        //             distinctCallbackIDs.Clear();
+        //             foreach (var callbackStruct in callbackStructs)
+        //             {
+        //                 if (!TypePredicate.ShouldIncludeCallbackStruct(in callbackStruct))
+        //                     continue;
+        //                 if (!distinctCallbackIDs.Add(callbackStruct.CallbackId))
+        //                     continue;
+        //
+        //                 var callbackId = callbackStruct.CallbackId.ToString(NumberFormatInfo.InvariantInfo);
+        //                 using (_writer.AppendContext())
+        //                     _writer.Write("case ").Write(callbackId).Write(':');
+        //
+        //                 using (_writer.BlockContext())
+        //                 {
+        //                     using (_writer.AppendContext())
+        //                     {
+        //                         _writer
+        //                             .Write("var data = Marshal.PtrToStructure<")
+        //                             .Write(callbackStruct.Name)
+        //                             .Write(">((IntPtr) dataPtr);");
+        //                     }
+        //
+        //                     using (_writer.AppendContext())
+        //                     {
+        //                         _writer
+        //                             .Write("var listener = Marshal.GetDelegateForFunctionPointer<SteamCallback<")
+        //                             .Write(callbackStruct.Name)
+        //                             .Write(">>(listenerPtr);");
+        //                     }
+        //
+        //                     _writer.Write("listener(in data, in bFailed);");
+        //                     _writer.Write("break;");
+        //                 }
+        //             }
+        //         }
+        //     }
+        //
+        //     _writer.WriteLine();
+        //
+        //     _writer.Write("static unsafe partial void HandleCallback(in CallbackMsg_t* pCallback)");
+        //     using (_writer.BlockContext())
+        //     {
+        //         _writer.Write("// Do something with the call result");
+        //     }
+        //
+        //     _writer.WriteLine();
+        // }
 
-            _writer.Write("static unsafe partial void HandleCallResult(in CallbackMsg_t* pCallback, in bool bFailed)");
-            using (_writer.BlockContext())
-            {
-                _writer.Write("// Do something with the call result");
-            }
-            _writer.WriteLine();
-        }
         _writer.WriteLine();
-        
-        foreach (var callbackStruct in _model.CallbackStructs)
+
+        foreach (var callbackStruct in callbackStructs)
         {
+            if (!TypePredicate.ShouldIncludeCallbackStruct(in callbackStruct))
+                continue;
+
             _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _dllPack);
             using (_writer.WriteStruct(callbackStruct.Name, "public unsafe"))
             {
                 _writer.WriteConstant(new ConstantModel
                 {
                     Name = "k_iCallback",
-                    Type = "SteamCallbacks.Type",
-                    Value = "SteamCallbacks.Type." + callbackStruct.Name
+                    Type = "int",
+                    Value = callbackStruct.CallbackId.ToString(NumberFormatInfo.InvariantInfo)
                 }, true);
                 _writer.WriteLine();
 
@@ -114,80 +137,4 @@ public partial class SteamGenerator
 
         return _writer.ToString();
     }
-
-    // private void GenerateCallbackTypeMethod(in CallbackStructModel[] callbackStructs)
-    // {
-    //     _writer.Write("public static Type GetCallbackType<T>(in T callback) where T : struct");
-    //     using (_writer.BlockContext())
-    //     {
-    //         _writer.Write("return callback switch");
-    //         using (_writer.BlockContext())
-    //         {
-    //             foreach (var callbackStruct in callbackStructs)
-    //             {
-    //                 using (_writer.AppendContext())
-    //                 {
-    //                     _writer
-    //                         .Write(callbackStruct.Name).Write(" => ")
-    //                         .Write("Type.").Write(callbackStruct.Name).Write(',');
-    //                 }
-    //             }
-    //
-    //             _writer.Write("_ => (Type) (-1)");
-    //         }
-    //
-    //         _writer.Write(';');
-    //     }
-    //
-    //     _writer.WriteLine();
-    // }
-    //
-    // private void GenerateCallbackIndexMethod(in CallbackStructModel[] callbackStructs)
-    // {
-    //     _writer.Write("public static int GetCallbackIndex(in Type callbackType)");
-    //     using (_writer.BlockContext())
-    //     {
-    //         _writer.Write("return callbackType switch");
-    //         using (_writer.BlockContext())
-    //         {
-    //             for (var i = 0; i < callbackStructs.Length; i++)
-    //             {
-    //                 var callbackStruct = callbackStructs[i];
-    //                 using (_writer.AppendContext())
-    //                 {
-    //                     _writer
-    //                         .Write("Type.").Write(callbackStruct.Name).Write(" => ")
-    //                         .Write(i.ToString(NumberFormatInfo.InvariantInfo)).Write(',');
-    //                 }
-    //             }
-    //
-    //             _writer.Write("_ => (Type) -1");
-    //         }
-    //
-    //         _writer.Write(';');
-    //     }
-    //
-    //     _writer.WriteLine();
-    // }
-    //
-    // private void GenerateCallbackTypeEnum(CallbackStructModel[] callbackStructs)
-    // {
-    //     _writer.Write("public enum Type");
-    //     using (_writer.BlockContext())
-    //     {
-    //         foreach (var callbackStruct in callbackStructs)
-    //         {
-    //             using (_writer.AppendContext())
-    //             {
-    //                 _writer
-    //                     .Write(callbackStruct.Name)
-    //                     .Write(" = ")
-    //                     .Write(callbackStruct.CallbackId.ToString(NumberFormatInfo.InvariantInfo))
-    //                     .Write(',');
-    //             }
-    //         }
-    //     }
-    //
-    //     _writer.WriteLine();
-    // }
 }
