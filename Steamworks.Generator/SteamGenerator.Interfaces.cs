@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Steamworks.Generator.CodeGeneration;
 using Steamworks.Generator.Extensions;
 
@@ -14,21 +15,14 @@ public partial class SteamGenerator
 
         foreach (var interfaceModel in _model.Interfaces)
         {
-            using (_writer.WriteClass(interfaceModel.Name, "public static unsafe"))
+            _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _dllPack);
+            using (_writer.WriteStruct(interfaceModel.Name, "public readonly unsafe ref"))
             {
-                if (interfaceModel.Accessors != null)
-                {
-                    foreach (var accessor in interfaceModel.Accessors)
-                    {
-                        _writer.Write("// " + accessor.Kind + ", " + accessor.Name + ", " + accessor.FlatName);
-                        _writer.WriteDllImportAttribute(_dllName, accessor.FlatName);
-                        using (_writer.AppendContext())
-                            _writer.Write("public static extern IntPtr ").Write(accessor.FlatName).Write("();");
-                    }
+                // pointer
+                _writer.Write("private readonly IntPtr _self;");
+                _writer.WriteLine();
 
-                    _writer.WriteLine();
-                }
-
+                // TODO Does interface even have fields?
                 if (interfaceModel.Fields != null)
                 {
                     foreach (var field in interfaceModel.Fields)
@@ -39,20 +33,21 @@ public partial class SteamGenerator
                     _writer.WriteLine();
                 }
 
+                // TODO Methods should map to SteamNative.XYZ()
+                if (interfaceModel.Methods != null)
+                {
+                    foreach (var method in interfaceModel.Methods)
+                    {
+                        _writer.WriteMethodFacing(method, true);
+                        _writer.WriteLine();
+                    }
+                }
+                
                 if (interfaceModel.Enums != null)
                 {
                     foreach (var @enum in interfaceModel.Enums)
                     {
                         _writer.WriteEnum(@enum);
-                        _writer.WriteLine();
-                    }
-                }
-
-                if (interfaceModel.Methods != null)
-                {
-                    foreach (var method in interfaceModel.Methods)
-                    {
-                        _writer.WriteMethod(_dllName, method);
                         _writer.WriteLine();
                     }
                 }

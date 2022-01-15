@@ -1,9 +1,97 @@
 {
+  "native_methods": [
+    {
+      "methodname": "SteamAPI_Init",
+      "methodname_flat": "SteamAPI_Init",
+      "params": [],
+      "returntype": "bool"
+    },
+    {
+      "methodname": "SteamAPI_Shutdown",
+      "methodname_flat": "SteamAPI_Shutdown",
+      "params": [],
+      "returntype": "void"
+    },
+    {
+      "methodname": "SteamAPI_RestartAppIfNecessary",
+      "methodname_flat": "SteamAPI_RestartAppIfNecessary",
+      "params": [
+        { "paramname":"unOwnAppID", "paramtype":"AppId_t" }
+      ],
+      "returntype": "bool"
+    },
+    {
+      "methodname": "SteamAPI_ReleaseCurrentThreadMemory",
+      "methodname_flat": "SteamAPI_ReleaseCurrentThreadMemory",
+      "params": [],
+      "returntype": "void"
+    },
+    {
+      "methodname": "SteamAPI_GetHSteamPipe",
+      "methodname_flat": "SteamAPI_GetHSteamPipe",
+      "params": [],
+      "returntype": "HSteamPipe"
+    },
+    {
+      "methodname": "SteamAPI_ManualDispatch_Init",
+      "methodname_flat": "SteamAPI_ManualDispatch_Init",
+      "params": [],
+      "returntype": "void"
+    },
+    {
+      "methodname": "SteamAPI_ManualDispatch_RunFrame",
+      "methodname_flat": "SteamAPI_ManualDispatch_RunFrame",
+      "params": [
+        { "paramname":"hSteamPipe", "paramtype":"HSteamPipe" }
+      ],
+      "returntype": "void"
+    },
+    {
+      "methodname": "SteamAPI_ManualDispatch_GetNextCallback",
+      "methodname_flat": "SteamAPI_ManualDispatch_GetNextCallback",
+      "params": [
+        { "paramname":"hSteamPipe", "paramtype":"HSteamPipe" },
+        { "paramname":"pCallbackMsg", "paramtype":"CallbackMsg_t *" }
+      ],
+      "returntype": "bool"
+    },
+    {
+      "methodname": "SteamAPI_ManualDispatch_FreeLastCallback",
+      "methodname_flat": "SteamAPI_ManualDispatch_FreeLastCallback",
+      "params": [
+        { "paramname":"hSteamPipe", "paramtype":"HSteamPipe" }
+      ],
+      "returntype": "void"
+    },
+    {
+      "methodname": "SteamAPI_ManualDispatch_GetAPICallResult",
+      "methodname_flat": "SteamAPI_ManualDispatch_GetAPICallResult",
+      "params": [
+        { "paramname":"hSteamPipe", "paramtype":"HSteamPipe" },
+        { "paramname":"hSteamAPICall", "paramtype":"SteamAPICall_t" },
+        { "paramname":"pCallback", "paramtype":"void *" },
+        { "paramname":"cubCallback", "paramtype":"int" },
+        { "paramname":"iCallbackExpected", "paramtype":"int" },
+        { "paramname":"pbFailed", "paramtype":"bool *" }
+      ],
+      "returntype": "bool"
+    }
+  ],
   "structs": [
     {
       "fields": [],
       "methods": [],
       "struct": "SteamDatagramRelayAuthTicket"
+    },
+    {
+      "fields": [
+        { "fieldname":"m_hSteamUser", "fieldtype":"HSteamUser" },
+        { "fieldname":"m_iCallback", "fieldtype":"int" },
+        { "fieldname":"m_pubParam", "fieldtype":"uint8 *" },
+        { "fieldname":"m_cubParam", "fieldtype":"int" }
+      ],
+      "methods": [],
+      "struct": "CallbackMsg_t"
     }
   ],
   "typedefs": [

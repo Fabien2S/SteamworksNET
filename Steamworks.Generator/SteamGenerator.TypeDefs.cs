@@ -40,15 +40,15 @@ public partial class SteamGenerator
 
     private void GenerateTypeDefStruct(string type, string name)
     {
-        _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _pack);
-        using (_writer.WriteStruct(name, "public unsafe"))
+        _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _dllPack);
+        using (_writer.WriteStruct(name, "public readonly unsafe"))
         {
             // backing field
             if (SteamConverter.TryGetUnmanagedType(type, out var unmanagedType))
                 _writer.WriteMarshalAsAttribute(unmanagedType);
             using (_writer.AppendContext())
             {
-                _writer.Write("private ");
+                _writer.Write("private readonly ");
                 _writer.Write(type);
                 _writer.Write(" _value;");
             }
@@ -116,7 +116,7 @@ public partial class SteamGenerator
 
     public void GenerateTypeDefFixedSize(string type, string name, string fixedSize)
     {
-        _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _pack);
+        _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _dllPack);
         using (_writer.WriteStruct(name, "public unsafe"))
         {
             _writer.WriteConstant(new ConstantModel

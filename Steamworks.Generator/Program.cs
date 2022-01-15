@@ -11,43 +11,41 @@ internal static class Program
         const string dllName = "steam_api64";
         const string dllPack = "4";
 
-        Generate("steam_api.json", true, dllName, dllPack);
-        Generate("custom_steam_api.json", false, dllName, dllPack);
+        Generate("steam_api.json",  dllName, dllPack, "Steam");
+        Generate("custom_steam_api.json", dllName, dllPack, "Custom");
         return 0;
     }
 
-    private static void Generate(string filePath, bool isMain, string dllName, string dllPack)
+    private static void Generate(string filePath, string dllName, string dllPack, string name)
     {
-        var baseName = isMain ? "Steamworks" : "Custom";
-
         using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         var model = JsonSerializer.Deserialize<SteamDefinitionModel>(fileStream);
 
         var generator = new SteamGenerator(in model, dllName, dllPack);
 
-        if (isMain)
-        {
-            var bootstrap = generator.GenerateBootstrap();
-            TrySave(bootstrap, baseName, "Bootstrap");
-        }
+        var api = generator.GenerateApi();
+        TrySave(api, name, "API");
+
+        var native = generator.GenerateNative();
+        TrySave(native, name, "Native");
 
         var constants = generator.GenerateConstants();
-        TrySave(constants, baseName, "Constants");
+        TrySave(constants, name, "Constants");
 
         var typeDefs = generator.GenerateTypeDefs();
-        TrySave(typeDefs, baseName, "TypeDefs");
+        TrySave(typeDefs, name, "TypeDefs");
 
         var enums = generator.GenerateEnums();
-        TrySave(enums, baseName, "Enums");
+        TrySave(enums, name, "Enums");
 
         var interfaces = generator.GenerateInterfaces();
-        TrySave(interfaces, baseName, "Interfaces");
+        TrySave(interfaces, name, "Interfaces");
 
         var structs = generator.GenerateStructs();
-        TrySave(structs, baseName, "Structs");
+        TrySave(structs, name, "Structs");
 
         var callbacks = generator.GenerateCallbackStructs();
-        TrySave(callbacks, baseName, "Callbacks");
+        TrySave(callbacks, name, "Callbacks");
     }
 
     private static void TrySave(string text, string @base, string name)

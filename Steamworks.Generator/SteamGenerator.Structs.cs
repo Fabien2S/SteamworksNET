@@ -15,14 +15,14 @@ public partial class SteamGenerator
 
         foreach (var structModel in _model.Structs)
         {
-            _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _pack);
+            _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _dllPack);
             using (_writer.WriteStruct(structModel.Name, "public unsafe"))
             {
                 if (structModel.Constants != null)
                 {
                     foreach (var constant in structModel.Constants)
                     {
-                        _writer.WriteConstant(constant);
+                        _writer.WriteConstant(constant, false);
                     }
 
                     _writer.WriteLine();
@@ -38,14 +38,15 @@ public partial class SteamGenerator
                     _writer.WriteLine();
                 }
 
-                if (structModel.Methods != null)
-                {
-                    foreach (var method in structModel.Methods)
-                    {
-                        _writer.WriteMethod(_dllName, method);
-                        _writer.WriteLine();
-                    }
-                }
+                // TODO What about that?
+                // if (structModel.Methods != null)
+                // {
+                //     foreach (var method in structModel.Methods)
+                //     {
+                //         _writer.WriteMethodNative(_dllName, method);
+                //         _writer.WriteLine();
+                //     }
+                // }
             }
 
             _writer.WriteLine();

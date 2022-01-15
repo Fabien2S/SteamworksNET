@@ -12,10 +12,10 @@ public partial class SteamGenerator
 
         Prepare();
 
-        using (_writer.WriteClass("SteamConstants", "public static"))
+        using (_writer.WriteClass("SteamConstants", "public static partial"))
         {
             foreach (var constant in _model.Constants)
-                _writer.WriteConstant(constant);
+                _writer.WriteConstant(constant, false);
         }
 
         return _writer.ToString();
