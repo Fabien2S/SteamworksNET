@@ -19,12 +19,13 @@ public static class TypeConverter
         const string ptrSuffix = " *)";
         if (type.StartsWith(ptrPrefix, StringComparison.Ordinal) && type.EndsWith(ptrSuffix, StringComparison.Ordinal))
         {
+            // TODO Void is the return type
             // TODO Delegate
             return "IntPtr";
         }
 
-        // 'ISteam[...]' -> 'IntPtr'
-        if (type.StartsWith("ISteam", StringComparison.Ordinal))
+        // 'ISteam[...]*' -> 'IntPtr'
+        if (type.StartsWith("ISteam", StringComparison.Ordinal) && type.EndsWith('*'))
             return "IntPtr";
 
         // 'char *'
@@ -52,7 +53,7 @@ public static class TypeConverter
         return type switch
         {
             "unsigned char" => "byte",
-            "signed char" => "char",
+            "signed char" => "sbyte",
             "unsigned short" => "ushort",
             "unsigned int" => "uint",
             "long long" => "long",
