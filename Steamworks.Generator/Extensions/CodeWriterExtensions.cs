@@ -41,7 +41,7 @@ public static class CodeWriterExtensions
         }
     }
 
-    public static void WriteField(this CodeWriter writer, FieldModel field, TypeDefModel[] typeDefs)
+    public static void WriteField(this CodeWriter writer, FieldModel field, TypeDefModel[]? typeDefs)
     {
         if (!TypeFormatter.TryFormatField(ref field))
             return;

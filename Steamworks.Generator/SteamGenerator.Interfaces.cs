@@ -14,7 +14,7 @@ public partial class SteamGenerator
 
         foreach (var interfaceModel in _model.Interfaces)
         {
-            using (_writer.WriteClass(interfaceModel.Name, "internal static unsafe"))
+            using (_writer.WriteClass(interfaceModel.Name, "public static unsafe"))
             {
                 if (interfaceModel.Accessors != null)
                 {

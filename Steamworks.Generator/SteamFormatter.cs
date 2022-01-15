@@ -12,14 +12,17 @@ public static partial class SteamFormatter
     /// <summary>
     /// Format type for fixed size array
     /// </summary>
-    public static string FormatFixedSizeType(string type, TypeDefModel[] typeDefs)
+    public static string FormatFixedSizeType(string type, TypeDefModel[]? typeDefs)
     {
-        foreach (var typeDef in typeDefs)
+        if (typeDefs != null)
         {
-            if (!typeDef.Name.Equals(type, StringComparison.Ordinal))
-                continue;
+            foreach (var typeDef in typeDefs)
+            {
+                if (!typeDef.Name.Equals(type, StringComparison.Ordinal))
+                    continue;
 
-            return FormatFixedSizeType(typeDef.Type, typeDefs);
+                return FormatFixedSizeType(typeDef.Type, typeDefs);
+            }
         }
 
         return type switch
