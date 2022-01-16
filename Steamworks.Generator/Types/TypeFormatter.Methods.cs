@@ -61,7 +61,7 @@ public static partial class TypeFormatter
     {
         var type = TypeConverter.ConvertType(method.ReturnType);
         if (type.Equals("string", StringComparison.Ordinal))
-            type = "Utf8String";
+            type = "NativeString";
         return type;
     }
 
