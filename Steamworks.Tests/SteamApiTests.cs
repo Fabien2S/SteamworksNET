@@ -1,9 +1,9 @@
-global using static Steamworks.SteamClientAPI;
 using System;
 using System.Text;
 using System.Text.Json;
 using NUnit.Framework;
 using Steamworks.Callbacks;
+using static Steamworks.SteamClientAPI;
 
 namespace Steamworks.Tests;
 
@@ -80,9 +80,9 @@ public class SteamApiTests
     {
         var wait = true;
 
-        var handle = SteamMatchmaking().RequestLobbyList();
-
         var lobbyMatchListCallResult = CallResult<LobbyMatchList_t>.Create();
+        
+        var handle = SteamMatchmaking().RequestLobbyList();
         lobbyMatchListCallResult.Set(handle, (in LobbyMatchList_t lobbyMatchList, in bool failed) =>
         {
             if (failed)
