@@ -1,12 +1,14 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using static Steamworks.SteamAPI;
 
 namespace Steamworks.Callbacks;
 
 public static class SteamDispatcher
 {
-    private static readonly Dictionary<SteamAPICall_t, SteamCallbackNative> ResultCallbacks = new();
-    
+    private static readonly Dictionary<SteamAPICall_t, CallResultHandler<IntPtr>> CallResultHandlers = new();
+    private static readonly Dictionary<int, List<CallbackHandler<IntPtr>>> CallbackHandlers = new();
+
     static SteamDispatcher()
     {
         // Initialize dispatch
@@ -33,12 +35,14 @@ public static class SteamDispatcher
                     try
                     {
                         bool bFailed;
-                        if (SteamAPI_ManualDispatch_GetAPICallResult(hSteamPipe, pCallCompleted.m_hAsyncCall, pTmpCallResult, (int) pCallCompleted.m_cubParam, pCallCompleted.m_iCallback, &bFailed) || bFailed)
+                        if (SteamAPI_ManualDispatch_GetAPICallResult(hSteamPipe, pCallCompleted.m_hAsyncCall,
+                                pTmpCallResult, (int) pCallCompleted.m_cubParam, pCallCompleted.m_iCallback,
+                                &bFailed) || bFailed)
                         {
                             // Dispatch the call result to the registered handler(s) for the
                             // call identified by pCallCompleted->m_hAsyncCall
-                            if (ResultCallbacks.Remove(pCallCompleted.m_hAsyncCall, out var callback))
-                                callback((IntPtr) pTmpCallResult, bFailed);
+                            if (CallResultHandlers.Remove(pCallCompleted.m_hAsyncCall, out var callback))
+                                callback((IntPtr) pTmpCallResult, in bFailed);
                         }
                     }
                     finally
@@ -50,7 +54,11 @@ public static class SteamDispatcher
                 {
                     // Look at callback.m_iCallback to see what kind of callback it is,
                     // and dispatch to appropriate handler(s)
-                    HandleCallback(in pCallback);
+                    if (CallbackHandlers.TryGetValue(pCallback.m_iCallback, out var handlers))
+                    {
+                        foreach (var handler in handlers)
+                            handler((IntPtr) pCallback.m_pubParam);
+                    }
                 }
             }
             finally
@@ -60,12 +68,21 @@ public static class SteamDispatcher
         }
     }
 
-    private static unsafe void HandleCallback(in CallbackMsg_t pCallback)
+    internal static void RegisterCallResult(SteamAPICall_t handle, CallResultHandler<IntPtr> callback)
     {
+        CallResultHandlers[handle] = callback;
     }
 
-    internal static void RegisterCallResult(SteamAPICall_t handle, SteamCallbackNative callback)
+    public static void RegisterCallback(int id, CallbackHandler<IntPtr> callback)
     {
-        ResultCallbacks[handle] = callback;
+        if (CallbackHandlers.TryGetValue(id, out var list))
+            list.Add(callback);
+        else
+        {
+            CallbackHandlers[id] = new List<CallbackHandler<IntPtr>>
+            {
+                callback
+            };
+        }
     }
 }

@@ -18,6 +18,12 @@ public class SteamApiTests
         Assert.IsTrue(init, "SteamAPI.Init()");
     }
 
+    [TearDown]
+    public void Shutdown()
+    {
+        SteamAPI_Shutdown();
+    }
+
     [Test]
     public void ISteamUser_GetSteamID()
     {
@@ -52,7 +58,7 @@ public class SteamApiTests
     [Test]
     public void SteamMatchmaking_RequestLobbyList()
     {
-        var waitUntil = false;
+        var wait = true;
 
         var handle = SteamMatchmaking().RequestLobbyList();
 
@@ -70,16 +76,19 @@ public class SteamApiTests
                 msg.AppendLine($"lobby " + lobbyId);
             }
 
-            Assert.Pass(msg.ToString());
-            waitUntil = true;
+            var lobbyEnterCallback = Callback<LobbyEnter_t>.Create((in LobbyEnter_t result) =>
+            {
+                msg.AppendLine();
+                msg.Append(result.m_ulSteamIDLobby);
+
+                wait = false;
+                Assert.Pass(msg.ToString());
+            });
+            SteamMatchmaking().JoinLobby(SteamMatchmaking().GetLobbyByIndex(0));
         });
 
 
-        while (true)
-        {
-            SteamDispatcher.RunCallbacks(SteamAPI_GetHSteamPipe());
-            if (waitUntil) break;
-        }
+        while (wait) SteamDispatcher.RunCallbacks(SteamAPI_GetHSteamPipe());
     }
 
     [Test]
