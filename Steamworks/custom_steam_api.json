@@ -21,10 +21,10 @@
       "returntype": "bool"
     },
     {
-      "methodname": "SteamAPI_ReleaseCurrentThreadMemory",
-      "methodname_flat": "SteamAPI_ReleaseCurrentThreadMemory",
+      "methodname": "SteamAPI_GetHSteamPipe",
+      "methodname_flat": "SteamAPI_GetHSteamPipe",
       "params": [],
-      "returntype": "void"
+      "returntype": "HSteamPipe"
     },
     {
       "methodname": "SteamGameServer_Init",
@@ -46,14 +46,8 @@
       "returntype": "void"
     },
     {
-      "methodname": "SteamGameServer_ReleaseCurrentThreadMemory",
-      "methodname_flat": "SteamGameServer_ReleaseCurrentThreadMemory",
-      "params": [],
-      "returntype": "void"
-    },
-    {
-      "methodname": "SteamAPI_GetHSteamPipe",
-      "methodname_flat": "SteamAPI_GetHSteamPipe",
+      "methodname": "SteamGameServer_GetHSteamPipe",
+      "methodname_flat": "SteamGameServer_GetHSteamPipe",
       "params": [],
       "returntype": "HSteamPipe"
     },

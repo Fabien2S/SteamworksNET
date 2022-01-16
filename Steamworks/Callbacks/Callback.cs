@@ -10,12 +10,14 @@ public readonly struct Callback<T> : IDisposable where T : struct, ICallbackResu
     private static readonly int Id = default(T).Id;
 
     private readonly CallbackHandler<T> _callback;
+    private readonly bool _isGameServer;
 
-    private Callback(CallbackHandler<T> callback)
+    private Callback(CallbackHandler<T> callback, bool isGameServer)
     {
         _callback = callback;
+        _isGameServer = isGameServer;
 
-        SteamDispatcher.RegisterCallback(Id, _Handler);
+        SteamDispatcher.RegisterCallback(Id, _isGameServer, _Handler);
     }
 
     private void _Handler(in IntPtr data)
@@ -26,15 +28,9 @@ public readonly struct Callback<T> : IDisposable where T : struct, ICallbackResu
 
     public void Dispose()
     {
-        SteamDispatcher.UnregisterCallback(Id, _Handler);
+        SteamDispatcher.UnregisterCallback(Id, _isGameServer, _Handler);
     }
 
-    public static Callback<T> Create(CallbackHandler<T> callback) => new(callback);
-}
-
-[Flags]
-public enum CallbackFlags
-{
-    Registered = 1 << 0,
-    IsGameServer = 1 << 1
+    public static Callback<T> Create(CallbackHandler<T> callback) => new(callback, false);
+    public static Callback<T> CreateGameServer(CallbackHandler<T> callback) => new(callback, true);
 }

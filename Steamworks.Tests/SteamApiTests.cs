@@ -1,4 +1,4 @@
-global using static Steamworks.SteamAPI;
+global using static Steamworks.SteamClientAPI;
 using System;
 using System.Text;
 using System.Text.Json;
@@ -56,7 +56,7 @@ public class SteamApiTests
             Assert.Pass(JsonSerializer.Serialize(t));
         });
 
-        while (wait) SteamDispatcher.RunCallbacks(SteamAPI_GetHSteamPipe());
+        while (wait) SteamAPI_RunCallbacks();
     }
 
     [Test]
@@ -88,36 +88,33 @@ public class SteamApiTests
             if (failed)
                 Assert.Fail("SteamAPI_ISteamMatchmaking_RequestLobbyList failed!");
 
-            var lobbyCount = lobbyMatchList.m_nLobbiesMatching;
             var msg = new StringBuilder();
-            for (var i = 0; i < lobbyCount; i++)
+            for (var i = 0; i < lobbyMatchList.m_nLobbiesMatching; i++)
             {
                 var lobbyId = SteamMatchmaking().GetLobbyByIndex(i);
-                msg.AppendLine($"lobby " + lobbyId);
+                msg.AppendLine("lobby " + lobbyId);
             }
 
-            var lobbyEnterCallback = Callback<LobbyEnter_t>.Create((in LobbyEnter_t result) =>
-            {
-                msg.AppendLine();
-                msg.Append(result.m_ulSteamIDLobby);
-
-                wait = false;
-                Assert.Pass(msg.ToString());
-            });
-            SteamMatchmaking().JoinLobby(SteamMatchmaking().GetLobbyByIndex(0));
+            wait = true;
+            Assert.Pass(msg.ToString());
         });
 
-
-        while (wait) SteamDispatcher.RunCallbacks(SteamAPI_GetHSteamPipe());
+        while (wait) SteamAPI_RunCallbacks();
     }
 
     [Test]
-    public void IsBlenderInstalled()
+    public void SteamMatchmaking_CreateLobby()
     {
-        SteamMatchmaking().RequestLobbyList();
-        var blenderApp = new AppId_t(365670);
+        var wait = true;
 
-        var isAppInstalled = SteamApps().BIsAppInstalled(blenderApp);
-        Assert.Pass(isAppInstalled.ToString());
+        var lobbyEnterCallback = Callback<LobbyEnter_t>.Create((in LobbyEnter_t result) =>
+        {
+            wait = false;
+            Assert.Pass(result.m_ulSteamIDLobby.ToString());
+        });
+
+        SteamMatchmaking().CreateLobby(ELobbyType.k_ELobbyTypePrivate, 1);
+
+        while (wait) SteamAPI_RunCallbacks();
     }
 }
