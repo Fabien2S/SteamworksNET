@@ -27,6 +27,31 @@
       "returntype": "void"
     },
     {
+      "methodname": "SteamGameServer_Init",
+      "methodname_flat": "SteamGameServer_Init",
+      "params": [
+        { "paramname":  "unIP", "paramtype": "uint32" },
+        { "paramname":  "usSteamPort", "paramtype": "uint16" },
+        { "paramname":  "usGamePort", "paramtype": "uint16" },
+        { "paramname":  "usQueryPort", "paramtype": "uint16" },
+        { "paramname":  "eServerMode", "paramtype": "EServerMode" },
+        { "paramname":  "pchVersionString", "paramtype": "const char *" }
+      ],
+      "returntype": "bool"
+    },
+    {
+      "methodname": "SteamGameServer_Shutdown",
+      "methodname_flat": "SteamGameServer_Shutdown",
+      "params": [],
+      "returntype": "void"
+    },
+    {
+      "methodname": "SteamGameServer_ReleaseCurrentThreadMemory",
+      "methodname_flat": "SteamGameServer_ReleaseCurrentThreadMemory",
+      "params": [],
+      "returntype": "void"
+    },
+    {
       "methodname": "SteamAPI_GetHSteamPipe",
       "methodname_flat": "SteamAPI_GetHSteamPipe",
       "params": [],

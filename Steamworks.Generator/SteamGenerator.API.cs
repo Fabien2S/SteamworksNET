@@ -11,13 +11,16 @@ public partial class SteamGenerator
         
         using (_writer.WriteClass("SteamAPI", "public static unsafe partial"))
         {
-            if (_model.NativeMethods != null)
+            if (_model.NativeMethods is {Length: > 0})
             {
                 foreach (var nativeMethod in _model.NativeMethods)
+                {
                     _writer.WriteMethodFacing(nativeMethod, false);
+                    _writer.WriteLine();
+                }
             }
 
-            if (_model.Interfaces != null)
+            if (_model.Interfaces is {Length: > 0})
             {
                 foreach (var @interface in _model.Interfaces)
                 {
@@ -35,6 +38,7 @@ public partial class SteamGenerator
                                 .Write(accessor.Name).Write("() => ")
                                 .Write("SteamNative.").Write(accessor.FlatName).Write("();");
                         }
+                        _writer.WriteLine();
                     }
                 }
             }

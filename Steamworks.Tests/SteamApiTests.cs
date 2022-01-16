@@ -1,6 +1,7 @@
 global using static Steamworks.SteamAPI;
 using System;
 using System.Text;
+using System.Text.Json;
 using NUnit.Framework;
 using Steamworks.Callbacks;
 
@@ -40,6 +41,25 @@ public class SteamApiTests
     }
 
     [Test]
+    public void ISteamFriends_SetPersonaName()
+    {
+        var wait = true;
+
+        var setPersonaNameCallResult = CallResult<SetPersonaNameResponse_t>.Create();
+
+        var personaName = SteamFriends().GetPersonaName();
+        var handle = SteamFriends().SetPersonaName(personaName);
+        setPersonaNameCallResult.Set(handle, (in SetPersonaNameResponse_t t, in bool failed) =>
+        {
+            wait = false;
+            Assert.IsFalse(failed);
+            Assert.Pass(JsonSerializer.Serialize(t));
+        });
+
+        while (wait) SteamDispatcher.RunCallbacks(SteamAPI_GetHSteamPipe());
+    }
+
+    [Test]
     public void ISteamFriends_GetFriendList()
     {
         var count = SteamFriends().GetFriendCount((int) EFriendFlags.k_EFriendFlagAll);
@@ -62,7 +82,7 @@ public class SteamApiTests
 
         var handle = SteamMatchmaking().RequestLobbyList();
 
-        CallResult<LobbyMatchList_t> lobbyMatchListCallResult;
+        var lobbyMatchListCallResult = CallResult<LobbyMatchList_t>.Create();
         lobbyMatchListCallResult.Set(handle, (in LobbyMatchList_t lobbyMatchList, in bool failed) =>
         {
             if (failed)

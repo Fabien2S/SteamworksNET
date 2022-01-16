@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using static Steamworks.SteamAPI;
 
 namespace Steamworks.Callbacks;
@@ -7,7 +6,7 @@ namespace Steamworks.Callbacks;
 public static class SteamDispatcher
 {
     private static readonly Dictionary<SteamAPICall_t, CallResultHandler<IntPtr>> CallResultHandlers = new();
-    private static readonly Dictionary<int, List<CallbackHandler<IntPtr>>> CallbackHandlers = new();
+    private static readonly Dictionary<int, List<CallbackHandler<IntPtr>>> CallbackHandlers = new(); // TODO Can this be generated at runtime with a switch-case?
 
     static SteamDispatcher()
     {
@@ -73,16 +72,21 @@ public static class SteamDispatcher
         CallResultHandlers[handle] = callback;
     }
 
-    public static void RegisterCallback(int id, CallbackHandler<IntPtr> callback)
+    internal static void UnregisterCallResult(SteamAPICall_t handle)
+    {
+        CallResultHandlers.Remove(handle);
+    }
+
+    internal static void RegisterCallback(int id, CallbackHandler<IntPtr> callback)
+    {
+        if (!CallbackHandlers.TryGetValue(id, out var list))
+            CallbackHandlers[id] = list = new List<CallbackHandler<IntPtr>>();
+        list.Add(callback);
+    }
+
+    internal static void UnregisterCallback(int id, CallbackHandler<IntPtr> callback)
     {
         if (CallbackHandlers.TryGetValue(id, out var list))
-            list.Add(callback);
-        else
-        {
-            CallbackHandlers[id] = new List<CallbackHandler<IntPtr>>
-            {
-                callback
-            };
-        }
+            list.Remove(callback);
     }
 }
