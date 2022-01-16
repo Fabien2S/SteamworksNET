@@ -11,25 +11,13 @@ internal static class SteamDispatcher
     private static readonly Dictionary<SteamAPICall_t, CallResultDispatcher> CallResultHandlers = new();
     
     // TODO Can this be generated at runtime with a switch-case?
-    private static readonly Dictionary<int, List<CallbackDispatcher>> CallbackHandlers = new();
-    private static readonly Dictionary<int, List<CallbackDispatcher>> CallbackGameServerHandlers = new();
+    private static readonly Dictionary<int, List<CallbackDispatcher>> CallbackUserHandlers = new();
+    private static readonly Dictionary<int, List<CallbackDispatcher>> CallbackServerHandlers = new();
 
     static SteamDispatcher()
     {
         // Initialize dispatch
         SteamAPI_ManualDispatch_Init();
-    }
-
-    public static void RunUserCallbacks()
-    {
-        var hSteamPipe = SteamAPI_GetHSteamPipe();
-        RunCallbacks(hSteamPipe, CallResultHandlers, CallbackHandlers);
-    }
-
-    public static void RunGameServerCallbacks()
-    {
-        var hSteamPipe = SteamGameServer_GetHSteamPipe();
-        RunCallbacks(hSteamPipe, CallResultHandlers, CallbackGameServerHandlers);
     }
 
     private static unsafe void RunCallbacks(
@@ -86,6 +74,28 @@ internal static class SteamDispatcher
         }
     }
 
+    public static void RunUserCallbacks()
+    {
+        var hSteamPipe = SteamAPI_GetHSteamPipe();
+        RunCallbacks(hSteamPipe, CallResultHandlers, CallbackUserHandlers);
+    }
+
+    public static void ClearUserCallbacks()
+    {
+        CallbackUserHandlers.Clear();
+    }
+
+    public static void RunGameServerCallbacks()
+    {
+        var hSteamPipe = SteamGameServer_GetHSteamPipe();
+        RunCallbacks(hSteamPipe, CallResultHandlers, CallbackServerHandlers);
+    }
+
+    public static void ClearServerCallbacks()
+    {
+        CallbackServerHandlers.Clear();
+    }
+
     public static void RegisterCallResult(SteamAPICall_t handle, CallResultDispatcher callback)
     {
         CallResultHandlers[handle] = callback;
@@ -98,7 +108,7 @@ internal static class SteamDispatcher
 
     public static void RegisterCallback(int id, bool isGameServer, CallbackDispatcher callback)
     {
-        var callbackHandlers = isGameServer ? CallbackGameServerHandlers : CallbackHandlers;
+        var callbackHandlers = isGameServer ? CallbackServerHandlers : CallbackUserHandlers;
         if (!callbackHandlers.TryGetValue(id, out var list))
             callbackHandlers[id] = list = new List<CallbackDispatcher>();
         list.Add(callback);
@@ -106,7 +116,7 @@ internal static class SteamDispatcher
 
     public static void UnregisterCallback(int id, bool isGameServer, CallbackDispatcher callback)
     {
-        var callbackHandlers = isGameServer ? CallbackGameServerHandlers : CallbackHandlers;
+        var callbackHandlers = isGameServer ? CallbackServerHandlers : CallbackUserHandlers;
         if (callbackHandlers.TryGetValue(id, out var list))
             list.Remove(callback);
     }

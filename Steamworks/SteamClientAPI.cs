@@ -15,7 +15,12 @@ public static partial class SteamClientAPI
     /// SteamAPI_Shutdown
     /// </summary>
     /// <seealso href="https://partner.steamgames.com/doc/api/steam_api#SteamAPI_Shutdown"/>
-    public static void SteamAPI_Shutdown() => SteamNative.SteamAPI_Shutdown();
+    public static void SteamAPI_Shutdown()
+    {
+        SteamNative.SteamAPI_Shutdown();
+        SteamDispatcher.ClearUserCallbacks();
+        // TODO What about call results?
+    }
 
     /// <summary>
     /// Checks if your executable was launched through Steam and relaunches it through Steam if it wasn't.

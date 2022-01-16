@@ -20,7 +20,12 @@ public static partial class SteamServerAPI
     /// <summary>
     /// Shuts down the Steamworks GameServer API, releases pointers and frees memory.
     /// </summary>
-    public static void SteamGameServer_Shutdown() => SteamNative.SteamGameServer_Shutdown();
+    public static void SteamGameServer_Shutdown()
+    {
+        SteamNative.SteamGameServer_Shutdown();
+        SteamDispatcher.ClearServerCallbacks();
+        // TODO What about call results?
+    }
 
     /// <summary>
     /// Dispatches callbacks created with STEAM_GAMESERVER_CALLBACK and call results to all of the registered listeners.
