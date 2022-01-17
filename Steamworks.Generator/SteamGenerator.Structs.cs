@@ -15,7 +15,7 @@ public partial class SteamGenerator
 
         foreach (var structModel in _model.Structs)
         {
-            _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _dllPack);
+            _writer.WriteStructLayoutAttribute(LayoutKind.Sequential);
             using (_writer.WriteStruct(structModel.Name, "public unsafe"))
             {
                 if (structModel.Constants != null)

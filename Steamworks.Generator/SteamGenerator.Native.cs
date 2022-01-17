@@ -16,7 +16,7 @@ public partial class SteamGenerator
             {
                 foreach (var method in _model.NativeMethods)
                 {
-                    _writer.WriteMethodNative(_dllName, method, false);
+                    _writer.WriteMethodNative("SteamPlatform.LibraryName", method, false);
                     _writer.WriteLine();
                     hasOutput = true;
                 }
@@ -30,7 +30,7 @@ public partial class SteamGenerator
                     {
                         foreach (var accessor in @interface.Accessors)
                         {
-                            _writer.WriteDllImportAttribute(_dllName, accessor.FlatName);
+                            _writer.WriteDllImportAttribute(accessor.FlatName);
                             using (_writer.AppendContext())
                                 _writer
                                     .Write("public static extern ")
@@ -46,7 +46,7 @@ public partial class SteamGenerator
                     {
                         foreach (var method in @interface.Methods)
                         {
-                            _writer.WriteMethodNative(_dllName, method, true);
+                            _writer.WriteMethodNative("SteamPlatform.LibraryName", method, true);
                             _writer.WriteLine();
                             hasOutput = true;
                         }
@@ -63,7 +63,7 @@ public partial class SteamGenerator
 
                     foreach (var method in @struct.Methods)
                     {
-                        _writer.WriteMethodNative(_dllName, method, true);
+                        _writer.WriteMethodNative("SteamPlatform.LibraryName", method, true);
                         _writer.WriteLine();
                         hasOutput = true;
                     }

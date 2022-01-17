@@ -40,7 +40,7 @@ public partial class SteamGenerator
 
     private void GenerateTypeDefStruct(string type, string name)
     {
-        _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _dllPack);
+        _writer.WriteStructLayoutAttribute(LayoutKind.Sequential);
         using (_writer.WriteStruct(name, "public readonly unsafe", ": IEquatable<" + name + ">"))
         {
             // backing field
@@ -119,7 +119,7 @@ public partial class SteamGenerator
 
     public void GenerateTypeDefFixedSize(string type, string name, string fixedSize)
     {
-        _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _dllPack);
+        _writer.WriteStructLayoutAttribute(LayoutKind.Sequential);
         using (_writer.WriteStruct(name, "public unsafe"))
         {
             _writer.WriteConstant(new ConstantModel

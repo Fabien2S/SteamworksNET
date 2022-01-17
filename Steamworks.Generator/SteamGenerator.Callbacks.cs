@@ -32,7 +32,7 @@ public partial class SteamGenerator
             if (!TypePredicate.ShouldIncludeCallbackStruct(in callbackStruct))
                 continue;
 
-            _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _dllPack);
+            _writer.WriteStructLayoutAttribute(LayoutKind.Sequential);
             using (_writer.WriteStruct(callbackStruct.Name, "public unsafe", ": ICallbackResult"))
             {
                 _writer.WriteConstant(new ConstantModel

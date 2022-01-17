@@ -8,20 +8,17 @@ internal static class Program
 {
     private static int Main()
     {
-        const string dllName = "steam_api64";
-        const string dllPack = "4";
-
-        Generate("steam_api.json",  dllName, dllPack, "Steam");
-        Generate("custom_steam_api.json", dllName, dllPack, "Custom");
+        Generate("steam_api.json", "Steam");
+        Generate("custom_steam_api.json", "Custom");
         return 0;
     }
 
-    private static void Generate(string filePath, string dllName, string dllPack, string name)
+    private static void Generate(string filePath, string name)
     {
         using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         var model = JsonSerializer.Deserialize<SteamDefinitionModel>(fileStream);
 
-        var generator = new SteamGenerator(in model, dllName, dllPack);
+        var generator = new SteamGenerator(in model);
 
         var api = generator.GenerateApi();
         TrySave(api, name, "API");

@@ -11,6 +11,7 @@ public struct CallResult<T> : IDisposable where T : struct
 
     private void _Handler(in IntPtr resultPtr, in bool failed)
     {
+        _handle = SteamConstants.k_uAPICallInvalid;
         var result = Marshal.PtrToStructure<T>(resultPtr);
         _callback(result, failed);
     }

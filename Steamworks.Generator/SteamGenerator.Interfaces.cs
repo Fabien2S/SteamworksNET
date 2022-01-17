@@ -15,7 +15,7 @@ public partial class SteamGenerator
 
         foreach (var interfaceModel in _model.Interfaces)
         {
-            _writer.WriteStructLayoutAttribute(LayoutKind.Sequential, _dllPack);
+            _writer.WriteStructLayoutAttribute(LayoutKind.Sequential);
             using (_writer.WriteStruct(interfaceModel.Name, "public readonly unsafe ref"))
             {
                 // pointer

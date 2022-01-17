@@ -75,7 +75,7 @@ public static class CodeWriterExtensions
     {
         TypeFormatter.FormatMethodNative(ref method);
 
-        writer.WriteDllImportAttribute(dllName, method.FlatName);
+        writer.WriteDllImportAttribute(method.FlatName);
 
         // TODO Rework TryGetUnmanagedType
         if (SteamConverter.TryGetUnmanagedType(method.ReturnType, out var unmanagedType))

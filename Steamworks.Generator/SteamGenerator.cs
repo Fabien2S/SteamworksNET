@@ -5,19 +5,13 @@ namespace Steamworks.Generator;
 
 public partial class SteamGenerator
 {
-    private readonly SteamDefinitionModel _model;
-    private readonly string _dllName;
-    private readonly string _dllPack;
-
     private readonly CodeWriter _writer;
+    private readonly SteamDefinitionModel _model;
 
-    public SteamGenerator(in SteamDefinitionModel model, string dllName, string dllPack)
+    public SteamGenerator(in SteamDefinitionModel model)
     {
-        _model = model;
-        _dllPack = dllPack;
-        _dllName = dllName;
-
         _writer = new CodeWriter();
+        _model = model;
     }
 
     private void Prepare()
