@@ -6,15 +6,16 @@ public partial class SteamGenerator
 {
     public string GenerateApi()
     {
-        Prepare();
+        using (CodeWriterContext())
+        {
+            // SteamAPI
+            GenerateFacing("SteamClientAPI", "global");
+            GenerateFacing("SteamClientAPI", "user");
 
-        // SteamAPI
-        GenerateFacing("SteamClientAPI", "global");
-        GenerateFacing("SteamClientAPI", "user");
-
-        // SteamGameServerAPI
-        GenerateFacing("SteamServerAPI", "global");
-        GenerateFacing("SteamServerAPI", "gameserver");
+            // SteamGameServerAPI
+            GenerateFacing("SteamServerAPI", "global");
+            GenerateFacing("SteamServerAPI", "gameserver");
+        }
 
         return _writer.ToString();
     }

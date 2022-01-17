@@ -9,12 +9,13 @@ public partial class SteamGenerator
         if (_model.Enums == null)
             return string.Empty;
 
-        Prepare();
-
-        foreach (var enumModel in _model.Enums)
+        using (CodeWriterContext())
         {
-            _writer.WriteEnum(enumModel);
-            _writer.WriteLine();
+            foreach (var enumModel in _model.Enums)
+            {
+                _writer.WriteEnum(enumModel);
+                _writer.WriteLine();
+            }   
         }
 
         return _writer.ToString();

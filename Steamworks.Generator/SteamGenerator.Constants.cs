@@ -10,12 +10,13 @@ public partial class SteamGenerator
         if (_model.Constants == null)
             return string.Empty;
 
-        Prepare();
-
-        using (_writer.WriteClass("SteamConstants", "public static partial"))
+        using (CodeWriterContext())
         {
-            foreach (var constant in _model.Constants)
-                _writer.WriteConstant(constant, false);
+            using (_writer.WriteClass("SteamConstants", "public static partial"))
+            {
+                foreach (var constant in _model.Constants)
+                    _writer.WriteConstant(constant, false);
+            }
         }
 
         return _writer.ToString();

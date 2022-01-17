@@ -12,14 +12,16 @@ public static class CodeWriterExtensions
         }
     }
 
-    public static void WriteNamespace(this CodeWriter writer, ReadOnlySpan<char> @namespace)
+    public static CodeBlockContext WriteNamespace(this CodeWriter writer, ReadOnlySpan<char> @namespace)
     {
         using (writer.AppendContext())
         {
-            writer.Write("namespace ");
-            writer.Write(@namespace);
-            writer.Write(';');
+            writer
+                .Write("namespace ")
+                .Write(@namespace);
         }
+
+        return writer.BlockContext();
     }
 
     public static CodeBlockContext WriteClass(this CodeWriter writer, ReadOnlySpan<char> className,

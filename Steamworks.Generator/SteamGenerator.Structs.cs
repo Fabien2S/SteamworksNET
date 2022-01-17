@@ -11,45 +11,46 @@ public partial class SteamGenerator
         if (_model.Structs == null)
             return string.Empty;
 
-        Prepare();
-
-        foreach (var structModel in _model.Structs)
+        using (CodeWriterContext())
         {
-            _writer.WriteStructLayoutAttribute(LayoutKind.Sequential);
-            using (_writer.WriteStruct(structModel.Name, "public unsafe"))
+            foreach (var structModel in _model.Structs)
             {
-                if (structModel.Constants != null)
+                _writer.WriteStructLayoutAttribute(LayoutKind.Sequential);
+                using (_writer.WriteStruct(structModel.Name, "public unsafe"))
                 {
-                    foreach (var constant in structModel.Constants)
+                    if (structModel.Constants != null)
                     {
-                        _writer.WriteConstant(constant, false);
+                        foreach (var constant in structModel.Constants)
+                        {
+                            _writer.WriteConstant(constant, false);
+                        }
+
+                        _writer.WriteLine();
                     }
 
-                    _writer.WriteLine();
-                }
-
-                if (structModel.Fields != null)
-                {
-                    foreach (var field in structModel.Fields)
+                    if (structModel.Fields != null)
                     {
-                        _writer.WriteField(field, _model.TypeDefs);
+                        foreach (var field in structModel.Fields)
+                        {
+                            _writer.WriteField(field, _model.TypeDefs);
+                        }
+
+                        _writer.WriteLine();
                     }
 
-                    _writer.WriteLine();
+                    // TODO What about that?
+                    // if (structModel.Methods != null)
+                    // {
+                    //     foreach (var method in structModel.Methods)
+                    //     {
+                    //         _writer.WriteMethodNative(_dllName, method);
+                    //         _writer.WriteLine();
+                    //     }
+                    // }
                 }
 
-                // TODO What about that?
-                // if (structModel.Methods != null)
-                // {
-                //     foreach (var method in structModel.Methods)
-                //     {
-                //         _writer.WriteMethodNative(_dllName, method);
-                //         _writer.WriteLine();
-                //     }
-                // }
+                _writer.WriteLine();
             }
-
-            _writer.WriteLine();
         }
 
         return _writer.ToString();

@@ -13,26 +13,28 @@ public partial class SteamGenerator
         if (_model.TypeDefs == null)
             return string.Empty;
 
-        Prepare();
-
-        foreach (var typeDefinition in _model.TypeDefs)
+        using (CodeWriterContext())
         {
-            var name = typeDefinition.Name;
 
-            var formattedName = TypeConverter.ConvertType(typeDefinition.Name);
-            if (!string.Equals(name, formattedName, StringComparison.Ordinal)) continue;
-
-            if (SteamConverter.IsFixedSizeArrayType(typeDefinition.Type, out var fixedType, out var fixedSize))
-                GenerateTypeDefFixedSize(fixedType, name, fixedSize);
-            else if (SteamConverter.IsDelegateType(typeDefinition.Type, out var delegateParameters))
-                GenerateTypeDefDelegate(delegateParameters, name);
-            else
+            foreach (var typeDefinition in _model.TypeDefs)
             {
-                var type = TypeConverter.ConvertType(typeDefinition.Type);
-                GenerateTypeDefStruct(type, name);
-            }
+                var name = typeDefinition.Name;
 
-            _writer.WriteLine();
+                var formattedName = TypeConverter.ConvertType(typeDefinition.Name);
+                if (!string.Equals(name, formattedName, StringComparison.Ordinal)) continue;
+
+                if (SteamConverter.IsFixedSizeArrayType(typeDefinition.Type, out var fixedType, out var fixedSize))
+                    GenerateTypeDefFixedSize(fixedType, name, fixedSize);
+                else if (SteamConverter.IsDelegateType(typeDefinition.Type, out var delegateParameters))
+                    GenerateTypeDefDelegate(delegateParameters, name);
+                else
+                {
+                    var type = TypeConverter.ConvertType(typeDefinition.Type);
+                    GenerateTypeDefStruct(type, name);
+                }
+
+                _writer.WriteLine();
+            }
         }
 
         return _writer.ToString();

@@ -14,7 +14,7 @@ public partial class SteamGenerator
         _model = model;
     }
 
-    private void Prepare()
+    private CodeBlockContext CodeWriterContext()
     {
         _writer.Reset();
 
@@ -23,7 +23,6 @@ public partial class SteamGenerator
         _writer.WriteUsing("System.Runtime.InteropServices");
         _writer.WriteLine();
 
-        _writer.WriteNamespace("Steamworks");
-        _writer.WriteLine();
+        return _writer.WriteNamespace("Steamworks");
     }
 }

@@ -7,65 +7,67 @@ public partial class SteamGenerator
 {
     public string GenerateNative()
     {
-        Prepare();
-
         var hasOutput = false;
-        using (_writer.WriteClass("SteamNative", "internal static unsafe partial"))
-        {
-            if (_model.NativeMethods != null)
-            {
-                foreach (var method in _model.NativeMethods)
-                {
-                    _writer.WriteMethodNative("SteamPlatform.LibraryName", method, false);
-                    _writer.WriteLine();
-                    hasOutput = true;
-                }
-            }
 
-            if (_model.Interfaces != null)
+        using (CodeWriterContext())
+        {
+            using (_writer.WriteClass("SteamNative", "internal static unsafe partial"))
             {
-                foreach (var @interface in _model.Interfaces)
+                if (_model.NativeMethods != null)
                 {
-                    if (@interface.Accessors != null)
+                    foreach (var method in _model.NativeMethods)
                     {
-                        foreach (var accessor in @interface.Accessors)
+                        _writer.WriteMethodNative("SteamPlatform.LibraryName", method, false);
+                        _writer.WriteLine();
+                        hasOutput = true;
+                    }
+                }
+
+                if (_model.Interfaces != null)
+                {
+                    foreach (var @interface in _model.Interfaces)
+                    {
+                        if (@interface.Accessors != null)
                         {
-                            _writer.WriteDllImportAttribute(accessor.FlatName);
-                            using (_writer.AppendContext())
-                                _writer
-                                    .Write("public static extern ")
-                                    .Write(@interface.Name).Write(' ')
-                                    .Write(accessor.FlatName)
-                                    .Write("();");
+                            foreach (var accessor in @interface.Accessors)
+                            {
+                                _writer.WriteDllImportAttribute(accessor.FlatName);
+                                using (_writer.AppendContext())
+                                    _writer
+                                        .Write("public static extern ")
+                                        .Write(@interface.Name).Write(' ')
+                                        .Write(accessor.FlatName)
+                                        .Write("();");
+                            }
+
+                            _writer.WriteLine();
                         }
 
-                        _writer.WriteLine();
+                        if (@interface.Methods != null)
+                        {
+                            foreach (var method in @interface.Methods)
+                            {
+                                _writer.WriteMethodNative("SteamPlatform.LibraryName", method, true);
+                                _writer.WriteLine();
+                                hasOutput = true;
+                            }
+                        }
                     }
+                }
 
-                    if (@interface.Methods != null)
+                if (_model.Structs != null)
+                {
+                    foreach (var @struct in _model.Structs)
                     {
-                        foreach (var method in @interface.Methods)
+                        if (@struct.Methods == null)
+                            continue;
+
+                        foreach (var method in @struct.Methods)
                         {
                             _writer.WriteMethodNative("SteamPlatform.LibraryName", method, true);
                             _writer.WriteLine();
                             hasOutput = true;
                         }
-                    }
-                }
-            }
-
-            if (_model.Structs != null)
-            {
-                foreach (var @struct in _model.Structs)
-                {
-                    if (@struct.Methods == null)
-                        continue;
-
-                    foreach (var method in @struct.Methods)
-                    {
-                        _writer.WriteMethodNative("SteamPlatform.LibraryName", method, true);
-                        _writer.WriteLine();
-                        hasOutput = true;
                     }
                 }
             }
