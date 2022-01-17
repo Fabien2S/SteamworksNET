@@ -1,36 +1,37 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Steamworks.Callbacks;
-
-public delegate void CallbackHandler<T>(in T result);
-
-public readonly struct Callback<T> : IDisposable where T : struct, ICallbackResult
+namespace Steamworks.Callbacks
 {
-    // TODO Rewrite with static interfaces
-    private static readonly int Id = default(T).Id;
+    public delegate void CallbackHandler<T>(in T result);
 
-    private readonly CallbackHandler<T> _callback;
-    private readonly bool _isGameServer;
-
-    private Callback(CallbackHandler<T> callback, bool isGameServer)
+    public readonly struct Callback<T> : IDisposable where T : struct, ICallbackResult
     {
-        _callback = callback;
-        _isGameServer = isGameServer;
+        // TODO Rewrite with static interfaces
+        private static readonly int Id = default(T).Id;
 
-        SteamDispatcher.RegisterCallback(Id, _isGameServer, _Handler);
+        private readonly CallbackHandler<T> _callback;
+        private readonly bool _isGameServer;
+
+        private Callback(CallbackHandler<T> callback, bool isGameServer)
+        {
+            _callback = callback;
+            _isGameServer = isGameServer;
+
+            SteamDispatcher.RegisterCallback(Id, _isGameServer, _Handler);
+        }
+
+        private void _Handler(in IntPtr data)
+        {
+            var result = Marshal.PtrToStructure<T>(data);
+            _callback(result);
+        }
+
+        public void Dispose()
+        {
+            SteamDispatcher.UnregisterCallback(Id, _isGameServer, _Handler);
+        }
+
+        public static Callback<T> Create(CallbackHandler<T> callback) => new(callback, false);
+        public static Callback<T> CreateGameServer(CallbackHandler<T> callback) => new(callback, true);
     }
-
-    private void _Handler(in IntPtr data)
-    {
-        var result = Marshal.PtrToStructure<T>(data);
-        _callback(result);
-    }
-
-    public void Dispose()
-    {
-        SteamDispatcher.UnregisterCallback(Id, _isGameServer, _Handler);
-    }
-
-    public static Callback<T> Create(CallbackHandler<T> callback) => new(callback, false);
-    public static Callback<T> CreateGameServer(CallbackHandler<T> callback) => new(callback, true);
 }

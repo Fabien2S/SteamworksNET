@@ -1,6 +1,7 @@
-﻿namespace Steamworks.Callbacks;
-
-public interface ICallbackResult
+﻿namespace Steamworks.Callbacks
 {
-    int Id { get; }
+    public interface ICallbackResult
+    {
+        int Id { get; }
+    }
 }
