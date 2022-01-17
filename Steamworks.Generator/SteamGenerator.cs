@@ -20,6 +20,7 @@ public partial class SteamGenerator
 
         _writer.WriteUsing("Steamworks.Callbacks");
         _writer.WriteUsing("Steamworks.Native");
+        _writer.WriteUsing("System");
         _writer.WriteUsing("System.Runtime.InteropServices");
         _writer.WriteLine();
 
