@@ -1,6 +1,5 @@
 using System;
 using System.Text;
-using System.Text.Json;
 using NUnit.Framework;
 using Steamworks.Callbacks;
 using static Steamworks.SteamClientAPI;
@@ -52,8 +51,11 @@ public class SteamApiTests
         setPersonaNameCallResult.Set(handle, (in SetPersonaNameResponse_t t, in bool failed) =>
         {
             wait = false;
+            
             Assert.IsFalse(failed);
-            Assert.Pass(JsonSerializer.Serialize(t));
+            Assert.IsTrue(t.m_bSuccess);
+            Assert.IsTrue(t.m_bLocalSuccess);
+            Assert.AreEqual(t.m_result, EResult.k_EResultDuplicateRequest);
         });
 
         while (wait) SteamAPI_RunCallbacks();

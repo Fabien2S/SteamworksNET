@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace Steamworks.Callbacks
 {
@@ -9,10 +9,11 @@ namespace Steamworks.Callbacks
         private SteamAPICall_t _handle;
         private CallResultHandler<T> _callback;
 
-        private void _Handler(in IntPtr resultPtr, in bool failed)
+        private unsafe void _Handler(in IntPtr resultPtr, in bool failed)
         {
             _handle = SteamConstants.k_uAPICallInvalid;
-            var result = Marshal.PtrToStructure<T>(resultPtr);
+
+            var result = Unsafe.Read<T>((void*) resultPtr);
             _callback(result, failed);
         }
 

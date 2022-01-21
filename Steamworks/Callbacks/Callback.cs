@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace Steamworks.Callbacks
 {
@@ -20,9 +20,9 @@ namespace Steamworks.Callbacks
             SteamDispatcher.RegisterCallback(Id, _isGameServer, _Handler);
         }
 
-        private void _Handler(in IntPtr data)
+        private unsafe void _Handler(in IntPtr resultPtr)
         {
-            var result = Marshal.PtrToStructure<T>(data);
+            var result = Unsafe.Read<T>((void*) resultPtr);
             _callback(result);
         }
 

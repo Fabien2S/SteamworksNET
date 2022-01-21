@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using static Steamworks.SteamNative;
 
 namespace Steamworks.Callbacks
@@ -38,7 +39,7 @@ namespace Steamworks.Callbacks
                     // Check for dispatching API call results
                     if (pCallback.m_iCallback == SteamAPICallCompleted_t.k_iCallback)
                     {
-                        var pCallCompleted = Marshal.PtrToStructure<SteamAPICallCompleted_t>((IntPtr) pCallback.m_pubParam);
+                        var pCallCompleted = Unsafe.Read<SteamAPICallCompleted_t>(pCallback.m_pubParam);
                         var pTmpCallResult = NativeMemory.Alloc(pCallCompleted.m_cubParam);
                         try
                         {
