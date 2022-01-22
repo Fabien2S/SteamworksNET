@@ -91,7 +91,7 @@ callResult.Set(handle, (in LobbyMatchList_t lobbyMatchList, in bool failed) =>
 
 [...]
 // When you no longer need the event, you can call .Dispose() on it
-// You do not needs to dispose the call results when shutting down the API (Client or Server are managed separately)
+// You do not need to dispose the call results when shutting down the API
 callResult.Dispose()
 ```
 </details>
@@ -120,7 +120,7 @@ SteamMatchmaking().CreateLobby(ELobbyType.k_ELobbyTypePrivate, 1);
 
 [...]
 // When you no longer need the event, you can call .Dispose() on it
-// You do not needs to dispose the callbacks when shutting down the API (Client or Server are managed separately)
+// You do not need to dispose the callbacks when shutting down the API
 lobbyEnterCallback.Dispose()
 
 ```
