@@ -1,6 +1,6 @@
 ## What is SteamworksNET
 
-SteamworksNET is a really low-Level C# wrapper generator for the Steamworks SDK.
+SteamworksNET is a really low-level C# wrapper generator for the Steamworks SDK.
 
 
 ## Getting Started
