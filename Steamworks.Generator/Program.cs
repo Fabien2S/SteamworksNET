@@ -50,7 +50,7 @@ internal static class Program
         if (string.IsNullOrEmpty(text))
             return;
 
-        var fileName = string.Concat(@base, ".", name, ".cs");
+        var fileName = string.Join('.', @base, name, "Generated", "cs");
         var path = Path.Join("Generated", fileName);
         File.WriteAllText(path, text, Encoding.UTF8);
     }
