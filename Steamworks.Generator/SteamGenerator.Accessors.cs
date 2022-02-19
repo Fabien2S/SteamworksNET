@@ -4,7 +4,7 @@ namespace Steamworks.Generator;
 
 public partial class SteamGenerator
 {
-    public string GenerateApi()
+    public string GenerateAccessors()
     {
         using (CodeWriterContext())
         {

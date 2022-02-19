@@ -20,8 +20,8 @@ internal static class Program
 
         var generator = new SteamGenerator(in model);
 
-        var api = generator.GenerateApi();
-        TrySave(api, name, "API");
+        var accessors = generator.GenerateAccessors();
+        TrySave(accessors, name, "Accessors");
 
         var native = generator.GenerateNative();
         TrySave(native, name, "Native");
