@@ -1,6 +1,6 @@
 ## What is SteamworksNET
 
-SteamworksNET is a really low-Level C# wrapper generator for the Steamworks SDK.
+SteamworksNET is a really low-level C# wrapper generator for the Steamworks SDK.
 
 
 ## Getting Started
@@ -72,14 +72,14 @@ Creating CallResult is a must while using the Steamworks SDK
   <summary>View sample</summary>
 
 ```c#
-// Initialisation code is omitted
+// Initialization code is omitted
 [...]
 
 // Creating a CallResult only requires CallResult<T>.Create() where T is the type of the call result
 var callResult = CallResult<LobbyMatchList_t>.Create();
 
 // Then we are calling a function that will invoke a call result at some point
-// Fortunaly, this wrapper is typed, so it returns a CallHandle<T>
+// Fortunately, this wrapper is typed, so it returns a CallHandle<T>
 var handle = SteamMatchmaking().RequestLobbyList();
 
 // As for the base sdk, we are setting the callback
@@ -91,7 +91,7 @@ callResult.Set(handle, (in LobbyMatchList_t lobbyMatchList, in bool failed) =>
 
 [...]
 // When you no longer need the event, you can call .Dispose() on it
-// You do not needs to dispose the call results when shutting down the API (Client or Server are managed separately)
+// You do not need to dispose the call results when shutting down the API
 callResult.Dispose()
 ```
 </details>
@@ -104,7 +104,7 @@ Creating Callback is also a must while using the Steamworks SDK
   <summary>View sample</summary>
 
 ```c#
-// Initialisation code is omitted
+// Initialization code is omitted
 [...]
 
 // Creating a Callback only requires Callback<T>.Create({function}) where T is the type of the callback
@@ -120,7 +120,7 @@ SteamMatchmaking().CreateLobby(ELobbyType.k_ELobbyTypePrivate, 1);
 
 [...]
 // When you no longer need the event, you can call .Dispose() on it
-// You do not needs to dispose the callbacks when shutting down the API (Client or Server are managed separately)
+// You do not need to dispose the callbacks when shutting down the API
 lobbyEnterCallback.Dispose()
 
 ```
