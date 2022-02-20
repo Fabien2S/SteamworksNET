@@ -1,119 +1,124 @@
 ﻿using System.Text;
 
-namespace Steamworks.Generator.CodeGeneration
+namespace Steamworks.Generator.CodeGeneration;
+
+public class CodeWriter
 {
-    public class CodeWriter
+    private const int IndentCharCount = 4;
+
+    private string Indent => _indentCache ??= new string(' ', IndentCharCount * _indent);
+
+    private readonly StringBuilder _builder;
+
+    private int _indent;
+    private int _append;
+
+    private string? _indentCache;
+
+    public CodeWriter()
     {
-        private const int IndentCharCount = 4;
+        _builder = new StringBuilder();
+    }
 
-        private string Indent => _indentCache ??= new string(' ', IndentCharCount * _indent);
+    public CodeWriter(StringBuilder builder)
+    {
+        _builder = builder ?? throw new ArgumentNullException(nameof(builder));
+    }
 
-        private readonly StringBuilder _builder;
+    public void Reset()
+    {
+        _builder.Clear();
 
-        private int _indent;
-        private int _append;
+        _indent = 0;
+        _append = 0;
 
-        private string? _indentCache;
+        _indentCache = null;
+    }
 
-        public CodeWriter()
+    public CodeWriter Write(char c)
+    {
+        if (_append > 0)
         {
-            _builder = new StringBuilder();
-        }
-
-        public void Reset()
-        {
-            _builder.Clear();
-
-            _indent = 0;
-            _append = 0;
-
-            _indentCache = null;
-        }
-
-        public CodeWriter Write(char c)
-        {
-            if (_append > 0)
-            {
-                _builder.Append(c);
-                return this;
-            }
-
-            _builder.Append(Indent);
             _builder.Append(c);
-            _builder.AppendLine();
             return this;
         }
 
-        public CodeWriter Write(ReadOnlySpan<char> line)
+        _builder.Append(Indent);
+        _builder.Append(c);
+        _builder.AppendLine();
+        return this;
+    }
+
+    public CodeWriter Write(ReadOnlySpan<char> line)
+    {
+        if (line.IsEmpty)
         {
-            if (line.IsEmpty)
-            {
-                if (_append == 0) _builder.AppendLine();
-                return this;
-            }
+            if (_append == 0) _builder.AppendLine();
+            return this;
+        }
 
-            if (_append > 0)
-            {
-                _builder.Append(line);
-                return this;
-            }
-
-            _builder.Append(Indent);
+        if (_append > 0)
+        {
             _builder.Append(line);
-            _builder.AppendLine();
             return this;
         }
 
-        public CodeWriter WriteLine()
-        {
-            _builder.AppendLine();
-            return this;
-        }
+        _builder.Append(Indent);
+        _builder.Append(line);
+        _builder.AppendLine();
+        return this;
+    }
 
-        public CodeAppendContext AppendContext()
-        {
-            return new CodeAppendContext(this);
-        }
+    public CodeWriter WriteLine()
+    {
+        _builder.AppendLine();
+        return this;
+    }
 
-        public CodeBlockContext BlockContext()
-        {
-            return new CodeBlockContext(this);
-        }
+    public CodeBlockContext WriteBlock(ReadOnlySpan<char> line)
+    {
+        Write(line);
+        return new CodeBlockContext(this);
+    }
 
-        public void BeginAppend()
-        {
-            if (_append == 0) _builder.Append(Indent);
-            _append++;
-        }
+    public CodeAppendContext AppendContext()
+    {
+        return new CodeAppendContext(this);
+    }
 
-        public bool EndAppend()
-        {
-            _append--;
-            if (_append < 0) _append = 0;
-            return _append == 0;
-        }
+    public void BeginAppend()
+    {
+        if (_append == 0) _builder.Append(Indent);
+        _append++;
+    }
 
-        public void BeginBlock(char c = '{')
-        {
-            Write(c);
+    public bool EndAppend()
+    {
+        _append--;
+        if (_append < 0) _append = 0;
+        return _append == 0;
+    }
 
-            _indent++;
-            _indentCache = null;
-        }
+    public void BeginBlock(string c = "{")
+    {
+        Write(c);
 
-        public void EndBlock(char c = '}')
-        {
-            _indentCache = null;
+        _indent++;
+        _indentCache = null;
+    }
 
-            _indent--;
-            if (_indent < 0) _indent = 0;
+    public void EndBlock(string c = "}")
+    {
+        _indentCache = null;
 
-            Write(c);
-        }
+        _indent--;
+        if (_indent < 0) _indent = 0;
 
-        public override string ToString()
-        {
-            return _builder.ToString();
-        }
+        Write(c);
+    }
+
+    public override string ToString()
+    {
+        return _builder.ToString();
     }
 }

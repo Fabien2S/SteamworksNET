@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using Steamworks.Generator.CodeGeneration;
 using Steamworks.Generator.Extensions;
 
 namespace Steamworks.Generator;
@@ -16,13 +15,12 @@ public partial class SteamGenerator
             foreach (var interfaceModel in _model.Interfaces)
             {
                 _writer.WriteStructLayoutAttribute(LayoutKind.Sequential);
-                using (_writer.WriteStruct(interfaceModel.Name, "public readonly unsafe ref"))
+                using (_writer.WriteBlock($"public unsafe ref struct {interfaceModel.Name}"))
                 {
                     // pointer
                     _writer.Write("private readonly IntPtr _self;");
                     _writer.WriteLine();
 
-                    // TODO Does interface even have fields?
                     if (interfaceModel.Fields != null)
                     {
                         foreach (var field in interfaceModel.Fields)
@@ -34,7 +32,7 @@ public partial class SteamGenerator
                     {
                         foreach (var method in interfaceModel.Methods)
                         {
-                            _writer.WriteMethodFacing(method, true);
+                            _writer.WriteMethodFacing(method, "_self");
                             _writer.WriteLine();
                         }
                     }

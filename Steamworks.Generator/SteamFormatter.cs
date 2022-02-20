@@ -7,7 +7,7 @@ namespace Steamworks.Generator;
 /// This class is responsible for formatting string to compilable C#.
 /// Every hard-coded fixes are here
 /// </summary>
-public static partial class SteamFormatter
+public static class SteamFormatter
 {
     /// <summary>
     /// Format type for fixed size array

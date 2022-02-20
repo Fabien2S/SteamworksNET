@@ -19,9 +19,10 @@ public static partial class TypeFormatter
             method.Parameters = parameters;
         }
 
+        // TODO Proper implementation
         // Fix operator for now
-        // if (method.Name.Contains("operator", StringComparison.Ordinal))
-        //     method.Name = method.FlatName[(method.FlatName.LastIndexOf('_') + 1)..];
+        if (method.Name.Contains("operator", StringComparison.Ordinal))
+            method.Name = method.FlatName[(method.FlatName.LastIndexOf('_') + 1)..];
     }
 
     private static string FormatMethodFacingReturnType(in MethodModel method)

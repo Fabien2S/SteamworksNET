@@ -24,6 +24,7 @@ public static class TypeConverter
             return "IntPtr";
         }
 
+        // TODO required?
         // 'ISteam[...]*' -> 'IntPtr'
         if (type.StartsWith("ISteam", StringComparison.Ordinal) && type.EndsWith('*'))
             return "IntPtr";
@@ -43,7 +44,6 @@ public static class TypeConverter
             while (i < type.Length && type[^(i + 1)] == '*') i++;
             return ConvertUnmanagedType(type[..^i].TrimEnd()) + new string('*', i);
         }
-
 
         return ConvertUnmanagedType(type);
     }
@@ -80,9 +80,6 @@ public static class TypeConverter
 
             "intptr_t" => "IntPtr",
             "size_t" => "UIntPtr",
-
-            // TODO Is this required?
-            "PublishedFileId_t" => "ulong",
 
             _ => type
         };

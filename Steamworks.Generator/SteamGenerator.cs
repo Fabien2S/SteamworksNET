@@ -18,12 +18,12 @@ public partial class SteamGenerator
     {
         _writer.Reset();
 
-        _writer.WriteUsing("Steamworks.Callbacks");
-        _writer.WriteUsing("Steamworks.Native");
-        _writer.WriteUsing("System");
-        _writer.WriteUsing("System.Runtime.InteropServices");
+        _writer.Write("using Steamworks.Callbacks;");
+        _writer.Write("using Steamworks.Native;");
+        _writer.Write("using System;");
+        _writer.Write("using System.Runtime.InteropServices;");
         _writer.WriteLine();
 
-        return _writer.WriteNamespace("Steamworks");
+        return _writer.WriteBlock("namespace Steamworks");
     }
 }

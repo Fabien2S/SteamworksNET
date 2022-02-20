@@ -48,6 +48,46 @@ public static class SteamConverter
                 unmanagedType = UnmanagedType.I1;
                 return true;
 
+            case "byte":
+                unmanagedType = UnmanagedType.U1;
+                return true;
+
+            case "sbyte":
+                unmanagedType = UnmanagedType.I1;
+                return true;
+
+            case "short":
+                unmanagedType = UnmanagedType.I2;
+                return true;
+
+            case "ushort":
+                unmanagedType = UnmanagedType.U2;
+                return true;
+
+            case "int":
+                unmanagedType = UnmanagedType.I4;
+                return true;
+
+            case "uint":
+                unmanagedType = UnmanagedType.U4;
+                return true;
+
+            case "long":
+                unmanagedType = UnmanagedType.I8;
+                return true;
+
+            case "ulong":
+                unmanagedType = UnmanagedType.U8;
+                return true;
+
+            case "float":
+                unmanagedType = UnmanagedType.R4;
+                return true;
+            
+            case "double":
+                unmanagedType = UnmanagedType.R8;
+                return true;
+
             case "string" or "char" or "char *":
                 unmanagedType = UnmanagedType.LPUTF8Str;
                 return true;

@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using Steamworks.Generator.CodeGeneration;
 using Steamworks.Generator.Extensions;
 using Steamworks.Generator.Models;
 using Steamworks.Generator.Types;
@@ -15,13 +14,13 @@ public partial class SteamGenerator
 
         using (CodeWriterContext())
         {
-
             foreach (var typeDefinition in _model.TypeDefs)
             {
                 var name = typeDefinition.Name;
 
                 var formattedName = TypeConverter.ConvertType(typeDefinition.Name);
-                if (!string.Equals(name, formattedName, StringComparison.Ordinal)) continue;
+                if (!string.Equals(name, formattedName, StringComparison.Ordinal))
+                    continue;
 
                 if (SteamConverter.IsFixedSizeArrayType(typeDefinition.Type, out var fixedType, out var fixedSize))
                     GenerateTypeDefFixedSize(fixedType, name, fixedSize);
@@ -42,136 +41,87 @@ public partial class SteamGenerator
 
     private void GenerateTypeDefStruct(string type, string name)
     {
+        var isPointer = type.EndsWith('*');
+        var backType = isPointer ? "IntPtr" : type;
+
         _writer.WriteStructLayoutAttribute(LayoutKind.Sequential);
-        using (_writer.WriteStruct(name, "public readonly unsafe", ": IEquatable<" + name + ">"))
+        using (_writer.WriteBlock($"public readonly unsafe struct {name} : IEquatable<{name}>, IEquatable<{backType}>"))
         {
             // backing field
             if (SteamConverter.TryGetUnmanagedType(type, out var unmanagedType))
                 _writer.WriteMarshalAsAttribute(unmanagedType);
-            using (_writer.AppendContext())
-            {
-                _writer.Write("private readonly ");
-                _writer.Write(type);
-                _writer.Write(" _value;");
-            }
 
+            _writer.Write($"private readonly {backType} _value;");
             _writer.WriteLine();
 
             // constructor
-            using (_writer.AppendContext())
-            {
-                _writer.Write("public");
-                _writer.Write(' ');
-                _writer.Write(name);
-                _writer.Write('(');
-                _writer.Write(type);
-                _writer.Write(" v) => _value = v;");
-            }
-
+            _writer.Write(isPointer
+                ? $"public {name}({type} v) => _value = (IntPtr) v;"
+                : $"public {name}({type} v) => _value = v;");
             _writer.WriteLine();
 
-            using (_writer.AppendContext())
-                _writer.Write("public bool Equals(").Write(name).Write(" other) => _value == other._value;");
+            _writer.Write($"public bool Equals({name} other) => _value == other._value;");
             _writer.WriteLine();
-            
-            var isPointer = type.Contains('*');
-            if (isPointer)
-            {
-                _writer.Write("public override int GetHashCode() => (int) _value;");
-            }
-            else
-            {
-                _writer.Write("public override bool Equals(object? obj) => obj is " + type + " v && Equals(v);");
-                _writer.WriteLine();
-                _writer.Write("public override int GetHashCode() => _value.GetHashCode();");
-                _writer.WriteLine();
-                _writer.Write("public override string ToString() => _value.ToString();");
-            }
 
+            _writer.Write($"public bool Equals({backType} other) => _value == other;");
+            _writer.WriteLine();
+
+            _writer.Write($"public override bool Equals(object obj) => obj is {name} v && Equals(v);");
+            _writer.WriteLine();
+
+            _writer.Write("public override int GetHashCode() => _value.GetHashCode();");
+            _writer.WriteLine();
+
+            _writer.Write(isPointer
+                ? "public override string ToString() => _value.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);"
+                : "public override string ToString() => _value.ToString();");
             _writer.WriteLine();
 
             // Backing->TypeDef operator
-            using (_writer.AppendContext())
-            {
-                _writer.Write("public static implicit operator");
-                _writer.Write(' ');
-                _writer.Write(name);
-                _writer.Write('(');
-                _writer.Write(type);
-                _writer.Write(" v) => new(v);");
-            }
-
+            _writer.Write($"public static implicit operator {name}({type} v) => new(v);");
             _writer.WriteLine();
 
-
             // TypeDef->Backing operator
-            using (_writer.AppendContext())
+            if (isPointer)
             {
-                _writer.Write("public static implicit operator");
-                _writer.Write(' ');
-                _writer.Write(type);
-                _writer.Write('(');
-                _writer.Write(name);
-                _writer.Write(" v) => v._value;");
-            }
+                _writer.Write($"public static implicit operator IntPtr({name} v) => v._value;");
+                _writer.WriteLine();
 
+                _writer.Write($"public static implicit operator {type}({name} v) => (void*) v._value;");
+            }
+            else
+                _writer.Write($"public static implicit operator {type}({name} v) => v._value;");
             _writer.WriteLine();
         }
     }
 
-    public void GenerateTypeDefFixedSize(string type, string name, string fixedSize)
+    private void GenerateTypeDefFixedSize(string type, string name, string fixedSize)
     {
         _writer.WriteStructLayoutAttribute(LayoutKind.Sequential);
-        using (_writer.WriteStruct(name, "public unsafe"))
+        using (_writer.WriteBlock($"public unsafe struct {name}"))
         {
             _writer.WriteConstant(new ConstantModel
             {
                 Name = "Length",
                 Type = "int",
                 Value = fixedSize
-            }, true);
+            });
             _writer.WriteLine();
 
             // backing field
             if (SteamConverter.TryGetUnmanagedType(type, out var unmanagedType))
                 _writer.WriteMarshalAsAttribute(unmanagedType);
-            using (_writer.AppendContext())
-            {
-                _writer.Write("private fixed ");
-                _writer.Write(type);
-                _writer.Write(" _value[");
-                _writer.Write(fixedSize);
-                _writer.Write("];");
-            }
 
+            _writer.Write($"private fixed {type} _value[{fixedSize}];");
             _writer.WriteLine();
 
 
             // TypeDef->Backing operator
-            using (_writer.AppendContext())
-            {
-                _writer.Write("public static implicit operator");
-                _writer.Write(' ');
-                _writer.Write(type);
-                _writer.Write('*');
-                _writer.Write('(');
-                _writer.Write(name);
-                _writer.Write(" v) => v._value;");
-            }
-
+            _writer.Write($"public static implicit operator {type}*({name} v) => v._value;");
             _writer.WriteLine();
 
             // Accessor
-            using (_writer.AppendContext())
-            {
-                _writer.Write("public");
-                _writer.Write(' ');
-                _writer.Write(type);
-                _writer.Write(' ');
-                _writer.Write("this[int index]");
-            }
-
-            using (_writer.BlockContext())
+            using (_writer.WriteBlock($"public {type} this[int index]"))
             {
                 _writer.Write("get => _value[index];");
                 _writer.Write("set => _value[index] = value;");
@@ -179,37 +129,29 @@ public partial class SteamGenerator
         }
     }
 
-    public void GenerateTypeDefDelegate(string type, string name)
+    private void GenerateTypeDefDelegate(string type, string name)
     {
         _writer.WriteUnmanagedFunctionPointerAttribute();
-        using (_writer.AppendContext())
+        _writer.BeginBlock($"public unsafe delegate void {name}(");
         {
-            _writer.Write("public unsafe delegate void ");
-            _writer.Write(name);
-        }
-
-        _writer.BeginBlock('(');
-
-        var types = type.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        for (var i = 0; i < types.Length; i++)
-        {
-            var formatType = TypeConverter.ConvertType(types[i]);
-            if (SteamConverter.TryGetUnmanagedType(formatType, out var parameterUnmanagedType))
-                _writer.WriteMarshalAsAttribute(parameterUnmanagedType);
-
-            using (_writer.AppendContext())
+            var types = type.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            for (var i = 0; i < types.Length; i++)
             {
-                _writer.Write(formatType);
-                _writer.Write(" arg" + i);
-                if (i == types.Length - 1)
-                    continue;
+                var formatType = TypeConverter.ConvertType(types[i]);
+                using (_writer.AppendContext())
+                {
+                    if (SteamConverter.TryGetUnmanagedType(formatType, out var parameterUnmanagedType))
+                    {
+                        _writer.WriteMarshalAsAttribute(parameterUnmanagedType);
+                        _writer.Write(' ');
+                    }
 
-                _writer.Write(", ");
-                _writer.WriteLine();
+                    _writer.Write($"{formatType} arg{i}");
+                    if (i != types.Length - 1)
+                        _writer.Write(',');
+                }
             }
         }
-
-        _writer.EndBlock(')');
-        _writer.Write(';');
+        _writer.EndBlock(");");
     }
 }

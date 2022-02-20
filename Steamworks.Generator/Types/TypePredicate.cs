@@ -19,7 +19,7 @@ public static class TypePredicate
     {
         return field.Type switch
         {
-            // SteamInputActionEvent_t.AnalogAction_t is not included in steam_api.json 
+            // SteamInputActionEvent_t::AnalogAction_t is not included in steam_api.json 
             "SteamInputActionEvent_t::AnalogAction_t" => false,
 
             _ => true

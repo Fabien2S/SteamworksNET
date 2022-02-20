@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using Steamworks.Generator.CodeGeneration;
 using Steamworks.Generator.Extensions;
 
 namespace Steamworks.Generator;
@@ -16,37 +15,30 @@ public partial class SteamGenerator
             foreach (var structModel in _model.Structs)
             {
                 _writer.WriteStructLayoutAttribute(LayoutKind.Sequential);
-                using (_writer.WriteStruct(structModel.Name, "public unsafe"))
+                using (_writer.WriteBlock($"public unsafe struct {structModel.Name}"))
                 {
                     if (structModel.Constants != null)
                     {
                         foreach (var constant in structModel.Constants)
-                        {
-                            _writer.WriteConstant(constant, false);
-                        }
-
+                            _writer.WriteConstant(constant);
                         _writer.WriteLine();
                     }
 
                     if (structModel.Fields != null)
                     {
                         foreach (var field in structModel.Fields)
-                        {
                             _writer.WriteField(field, _model.TypeDefs);
-                        }
-
                         _writer.WriteLine();
                     }
 
-                    // TODO What about that?
-                    // if (structModel.Methods != null)
-                    // {
-                    //     foreach (var method in structModel.Methods)
-                    //     {
-                    //         _writer.WriteMethodNative(_dllName, method);
-                    //         _writer.WriteLine();
-                    //     }
-                    // }
+                    if (structModel.Methods != null)
+                    {
+                        foreach (var method in structModel.Methods)
+                        {
+                            _writer.WriteMethodFacing(method, "ref this");
+                            _writer.WriteLine();
+                        }
+                    }
                 }
 
                 _writer.WriteLine();

@@ -1,5 +1,4 @@
-﻿using Steamworks.Generator.CodeGeneration;
-using Steamworks.Generator.Extensions;
+﻿using Steamworks.Generator.Extensions;
 
 namespace Steamworks.Generator;
 
@@ -11,13 +10,13 @@ public partial class SteamGenerator
 
         using (CodeWriterContext())
         {
-            using (_writer.WriteClass("SteamNative", "internal static unsafe partial"))
+            using (_writer.WriteBlock("internal static unsafe partial class SteamNative"))
             {
                 if (_model.NativeMethods != null)
                 {
                     foreach (var method in _model.NativeMethods)
                     {
-                        _writer.WriteMethodNative("SteamPlatform.LibraryName", method, false);
+                        _writer.WriteMethodNative(method, null);
                         _writer.WriteLine();
                         hasOutput = true;
                     }
@@ -32,12 +31,7 @@ public partial class SteamGenerator
                             foreach (var accessor in @interface.Accessors)
                             {
                                 _writer.WriteDllImportAttribute(accessor.FlatName);
-                                using (_writer.AppendContext())
-                                    _writer
-                                        .Write("public static extern ")
-                                        .Write(@interface.Name).Write(' ')
-                                        .Write(accessor.FlatName)
-                                        .Write("();");
+                                _writer.Write($"public static extern {@interface.Name} {accessor.FlatName}();");
                             }
 
                             _writer.WriteLine();
@@ -47,7 +41,7 @@ public partial class SteamGenerator
                         {
                             foreach (var method in @interface.Methods)
                             {
-                                _writer.WriteMethodNative("SteamPlatform.LibraryName", method, true);
+                                _writer.WriteMethodNative(method, "IntPtr");
                                 _writer.WriteLine();
                                 hasOutput = true;
                             }
@@ -64,7 +58,7 @@ public partial class SteamGenerator
 
                         foreach (var method in @struct.Methods)
                         {
-                            _writer.WriteMethodNative("SteamPlatform.LibraryName", method, true);
+                            _writer.WriteMethodNative(method, "ref " + @struct.Name);
                             _writer.WriteLine();
                             hasOutput = true;
                         }

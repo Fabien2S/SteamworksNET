@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Runtime.InteropServices;
-using Steamworks.Generator.CodeGeneration;
 using Steamworks.Generator.Extensions;
 using Steamworks.Generator.Models;
 using Steamworks.Generator.Types;
@@ -9,16 +8,6 @@ namespace Steamworks.Generator;
 
 public partial class SteamGenerator
 {
-    public static int GetCallbackId<T>(in T callback)
-    {
-        return callback switch
-        {
-            int => 0,
-            bool => -1,
-            _ => 0
-        };
-    }
-
     public string GenerateCallbackStructs()
     {
         var callbackStructs = _model.CallbackStructs;
@@ -33,20 +22,20 @@ public partial class SteamGenerator
                     continue;
 
                 _writer.WriteStructLayoutAttribute(LayoutKind.Sequential);
-                using (_writer.WriteStruct(callbackStruct.Name, "public unsafe", ": ICallbackResult"))
+                using (_writer.WriteBlock($"public unsafe struct {callbackStruct.Name} : ICallbackResult"))
                 {
                     _writer.WriteConstant(new ConstantModel
                     {
                         Name = "k_iCallback",
                         Type = "int",
                         Value = callbackStruct.CallbackId.ToString(NumberFormatInfo.InvariantInfo)
-                    }, true);
+                    });
                     _writer.WriteLine();
 
                     if (callbackStruct.Constants is {Length: > 0})
                     {
                         foreach (var constant in callbackStruct.Constants)
-                            _writer.WriteConstant(constant, false);
+                            _writer.WriteConstant(constant);
                         _writer.WriteLine();
                     }
 

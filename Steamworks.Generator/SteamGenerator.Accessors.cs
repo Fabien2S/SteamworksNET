@@ -1,6 +1,4 @@
-﻿using Steamworks.Generator.CodeGeneration;
-
-namespace Steamworks.Generator;
+﻿namespace Steamworks.Generator;
 
 public partial class SteamGenerator
 {
@@ -22,7 +20,7 @@ public partial class SteamGenerator
 
     private void GenerateFacing(string name, string kind)
     {
-        using (_writer.WriteClass(name, "public static unsafe partial"))
+        using (_writer.WriteBlock($"public static unsafe partial class {name}"))
         {
             if (_model.Interfaces is {Length: > 0})
             {
@@ -36,16 +34,8 @@ public partial class SteamGenerator
                         if (!kind.Equals(accessor.Kind, StringComparison.Ordinal))
                             continue;
 
-                        // public static {InterfaceName} {AccessorName}() => SteamNative.{AccessorFlatName}();
-                        using (_writer.AppendContext())
-                        {
-                            _writer
-                                .Write("public static ")
-                                .Write(@interface.Name).Write(' ')
-                                .Write(accessor.Name).Write("() => ")
-                                .Write("SteamNative.").Write(accessor.FlatName).Write("();");
-                        }
-
+                        // public static {Interface.Name} {Accessor.Name}() => SteamNative.{Accessor.FlatName}();
+                        _writer.Write($"public static {@interface.Name} {accessor.Name}() => SteamNative.{accessor.FlatName}();");
                         _writer.WriteLine();
                     }
                 }

@@ -1,4 +1,3 @@
-using Steamworks.Generator.CodeGeneration;
 using Steamworks.Generator.Extensions;
 
 namespace Steamworks.Generator;
@@ -12,10 +11,10 @@ public partial class SteamGenerator
 
         using (CodeWriterContext())
         {
-            using (_writer.WriteClass("SteamConstants", "public static partial"))
+            using (_writer.WriteBlock("public static partial class SteamConstants"))
             {
                 foreach (var constant in _model.Constants)
-                    _writer.WriteConstant(constant, false);
+                    _writer.WriteConstant(constant);
             }
         }
 
