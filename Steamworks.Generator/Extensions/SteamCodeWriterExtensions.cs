@@ -19,7 +19,10 @@ public static partial class SteamCodeWriterExtensions
     {
         TypeFormatter.FormatEnum(ref @enum);
 
-        using (writer.WriteBlock($"public enum {@enum.Name}"))
+        if (@enum.Name.Contains("Flags", StringComparison.Ordinal))
+            writer.Write("[Flags]");
+
+        using (writer.WriteBlock($"public enum {@enum.Name} : int"))
         {
             foreach (var enumValue in @enum.Values)
                 writer.Write($"{enumValue.Name} = {enumValue.Value},");

@@ -18,25 +18,25 @@ namespace Steamworks
 
         public bool IsValid()
         {
-            if (AccountType is <= EAccountType.k_EAccountTypeInvalid or >= EAccountType.k_EAccountTypeMax)
+            if (AccountType is <= EAccountType.Invalid or >= EAccountType.Max)
                 return false;
 
-            if (Universe is <= EUniverse.k_EUniverseInvalid or >= EUniverse.k_EUniverseMax)
+            if (Universe is <= EUniverse.Invalid or >= EUniverse.Max)
                 return false;
 
-            if (AccountType == EAccountType.k_EAccountTypeIndividual)
+            if (AccountType == EAccountType.Individual)
             {
                 if (AccountId == 0 || AccountInstance != SteamConstants.k_unSteamUserDefaultInstance)
                     return false;
             }
 
-            if (AccountType == EAccountType.k_EAccountTypeClan)
+            if (AccountType == EAccountType.Clan)
             {
                 if (AccountId == 0 || AccountInstance != 0)
                     return false;
             }
 
-            if (AccountType == EAccountType.k_EAccountTypeGameServer)
+            if (AccountType == EAccountType.GameServer)
             {
                 if (AccountId == 0)
                     return false;
