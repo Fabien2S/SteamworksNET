@@ -19,8 +19,7 @@ public static partial class TypeFormatter
             method.Parameters = parameters;
         }
 
-        // TODO Proper implementation
-        // Fix operator for now
+        // Rename operator
         if (method.Name.Contains("operator", StringComparison.Ordinal))
             method.Name = method.FlatName[(method.FlatName.LastIndexOf('_') + 1)..];
     }

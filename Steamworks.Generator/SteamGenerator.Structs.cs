@@ -35,8 +35,8 @@ public partial class SteamGenerator
                     {
                         foreach (var method in structModel.Methods)
                         {
-                            var methodName = method.Name;
-                            if (methodName.Equals("operator==", StringComparison.Ordinal))
+                            // write equals operator
+                            if (method.Name.Equals("operator==", StringComparison.Ordinal))
                             {
                                 _writer.WriteOperatorEquals(structModel.Name, method.FlatName);
                                 continue;
