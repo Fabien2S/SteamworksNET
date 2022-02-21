@@ -25,4 +25,13 @@ public static class TypePredicate
             _ => true
         };
     }
+
+    public static bool ShouldIncludeMethod(in MethodModel method)
+    {
+        return method.Name switch
+        {
+            "<" => false,
+            _ => true
+        };
+    }
 }

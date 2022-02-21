@@ -52,6 +52,9 @@ public static partial class SteamCodeWriterExtensions
 
     public static void WriteMethodFacing(this CodeWriter writer, MethodModel method, string? selfParameter)
     {
+        if (!TypePredicate.ShouldIncludeMethod(in method))
+            return;
+
         TypeFormatter.FormatMethodFacing(ref method);
 
         writer.Write("/// <summary>");
@@ -72,15 +75,11 @@ public static partial class SteamCodeWriterExtensions
 
         using (writer.AppendContext())
         {
-            // Method definition
+            writer.Write("public ");
+            if (selfParameter == null) writer.Write("static ");
+            writer.Write($"{method.ReturnType} {method.Name}(");
 
-            // public {ReturnType} {Name}(
-            writer
-                .Write(selfParameter != null ? "public" : "public static").Write(' ')
-                .Write(method.ReturnType).Write(' ')
-                .Write(method.Name).Write('(');
-
-            // {Params}
+            // Parameters
             var parameters = method.Parameters;
             if (parameters is {Length: > 0})
             {
@@ -98,18 +97,16 @@ public static partial class SteamCodeWriterExtensions
                 }
             }
 
-            // ) => 
             writer.Write(") => ");
 
-            // Method implementation
-
-            // SteamNative.{MethodFlatName}(
+            // SteamNative
             writer.Write("SteamNative.").Write(method.FlatName).Write('(');
 
+            // Self parameter
             if (selfParameter != null)
                 writer.Write(selfParameter);
 
-            // {Params}
+            // Parameters
             if (parameters is {Length: > 0})
             {
                 if (selfParameter != null) writer.Write(", ");
@@ -121,7 +118,6 @@ public static partial class SteamCodeWriterExtensions
                 }
             }
 
-            // );
             writer.Write(");");
         }
     }

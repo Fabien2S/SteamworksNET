@@ -24,7 +24,6 @@ public static class TypeConverter
             return "IntPtr";
         }
 
-        // TODO required?
         // 'ISteam[...]*' -> 'IntPtr'
         if (type.StartsWith("ISteam", StringComparison.Ordinal) && type.EndsWith('*'))
             return "IntPtr";
