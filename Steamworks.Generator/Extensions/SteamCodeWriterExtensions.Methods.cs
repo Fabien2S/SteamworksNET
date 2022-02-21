@@ -52,9 +52,6 @@ public static partial class SteamCodeWriterExtensions
 
     public static void WriteMethodFacing(this CodeWriter writer, MethodModel method, string? selfParameter)
     {
-        if (!TypePredicate.ShouldIncludeMethod(in method))
-            return;
-
         TypeFormatter.FormatMethodFacing(ref method);
 
         writer.Write("/// <summary>");
