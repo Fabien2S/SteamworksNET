@@ -34,8 +34,13 @@ public partial class SteamGenerator
                         if (!kind.Equals(accessor.Kind, StringComparison.Ordinal))
                             continue;
 
+                        var accessorName = accessor.Name.EndsWith("_SteamAPI", StringComparison.Ordinal)
+                            ? accessor.Name[..^"_SteamAPI".Length]
+                            : accessor.Name;
+
                         // public static {Interface.Name} {Accessor.Name}() => SteamNative.{Accessor.FlatName}();
-                        _writer.Write($"public static {@interface.Name} {accessor.Name}() => SteamNative.{accessor.FlatName}();");
+                        _writer.Write(
+                            $"public static {@interface.Name} {accessorName}() => SteamNative.{accessor.FlatName}();");
                         _writer.WriteLine();
                     }
                 }

@@ -51,10 +51,6 @@ public static partial class TypeFormatter
 
             method.Parameters = parameters;
         }
-
-        // Fix operator for now
-        // if (method.Name.Contains("operator", StringComparison.Ordinal))
-        //     method.Name = method.FlatName[(method.FlatName.LastIndexOf('_') + 1)..];
     }
 
     private static string FormatMethodNativeReturnType(in MethodModel method)
