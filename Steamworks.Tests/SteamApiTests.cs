@@ -55,21 +55,22 @@ public class SteamApiTests
             Assert.IsFalse(failed);
             Assert.IsTrue(t.m_bSuccess);
             Assert.IsTrue(t.m_bLocalSuccess);
-            Assert.AreEqual(t.m_result, EResult.k_EResultDuplicateRequest);
+            Assert.AreEqual(t.m_result, EResult.DuplicateRequest);
         });
 
         while (wait) SteamAPI_RunCallbacks();
+        setPersonaNameCallResult.Dispose();
     }
 
     [Test]
     public void ISteamFriends_GetFriendList()
     {
-        var count = SteamFriends().GetFriendCount((int) EFriendFlags.k_EFriendFlagAll);
+        var count = SteamFriends().GetFriendCount((int) EFriendFlags.Immediate);
 
         var msg = new StringBuilder();
         for (var i = 0; i < count; i++)
         {
-            var friendId = SteamFriends().GetFriendByIndex(i, (int) EFriendFlags.k_EFriendFlagAll);
+            var friendId = SteamFriends().GetFriendByIndex(i, (int) EFriendFlags.Immediate);
             var friendName = SteamFriends().GetFriendPersonaName(friendId);
             msg.AppendLine($"friend {i} (id: {friendId}, name: {friendName})");
         }
@@ -102,6 +103,7 @@ public class SteamApiTests
         });
 
         while (wait) SteamAPI_RunCallbacks();
+        lobbyMatchListCallResult.Dispose();
     }
 
     [Test]
@@ -115,8 +117,9 @@ public class SteamApiTests
             Assert.Pass(result.m_ulSteamIDLobby.ToString());
         });
 
-        SteamMatchmaking().CreateLobby(ELobbyType.k_ELobbyTypePrivate, 1);
+        SteamMatchmaking().CreateLobby(ELobbyType.Private, 1);
 
         while (wait) SteamAPI_RunCallbacks();
+        lobbyEnterCallback.Dispose();
     }
 }
