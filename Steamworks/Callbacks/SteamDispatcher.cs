@@ -48,7 +48,7 @@ namespace Steamworks.Callbacks
                             {
                                 // Dispatch the call result to the registered handler(s) for the
                                 // call identified by pCallCompleted->m_hAsyncCall
-                                if (callResults.Remove(pCallCompleted.m_hAsyncCall, out var callback) && handlers != null)
+                                if (callResults.Remove(pCallCompleted.m_hAsyncCall, out var callback))
                                     callback((IntPtr) pTmpCallResult, in bFailed);
                             }
                         }
