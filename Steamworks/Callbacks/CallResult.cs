@@ -4,7 +4,7 @@ namespace Steamworks.Callbacks
 {
     public delegate void CallResultHandler<T>(in T result, in bool failed);
 
-    public struct CallResult<T> : IDisposable where T : struct
+    public struct CallResult<T> : IDisposable where T : unmanaged
     {
         private SteamAPICall_t _handle;
         private CallResultHandler<T> _callback;

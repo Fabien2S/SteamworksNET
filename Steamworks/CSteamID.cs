@@ -47,7 +47,7 @@ namespace Steamworks
         }
 
         public override int GetHashCode() => _id.GetHashCode();
-        public override string ToString() => _id.ToString(NumberFormatInfo.InvariantInfo);
+        public override string ToString() => _id.ToString("D64", NumberFormatInfo.InvariantInfo);
 
         public static implicit operator CSteamID(ulong id) => new(id);
         public static implicit operator ulong(CSteamID steamId) => steamId._id;

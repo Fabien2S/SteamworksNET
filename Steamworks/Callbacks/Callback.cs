@@ -4,7 +4,7 @@ namespace Steamworks.Callbacks
 {
     public delegate void CallbackHandler<T>(in T result);
 
-    public readonly struct Callback<T> : IDisposable where T : struct, ICallbackResult
+    public readonly struct Callback<T> : IDisposable where T : unmanaged, ICallbackResult
     {
         // TODO Rewrite with static interfaces
         private static readonly int Id = default(T).Id;
